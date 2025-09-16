@@ -13,60 +13,59 @@ export const TopPerformer = () => {
         {
             key:"performerData1",
             profileImg:userimg1,
-            username:"Sunil Joshi",
+            username:"Rajesh Kumar",
             designation:"Web Designer",
-            project:"Elite Admin",
+            project:"Review marketing plan",
             priority:"Low",
             color:"lightprimary",
-            budget:"3.9k"
+            budget:"19 Sep 2025"
         },
         {
             key:"performerData2",
             profileImg:userimg2,
-            username:"John Deo",
+            username:"Priya Sharma",
             designation:"Web Developer",
-            project:"Flexy Admin",
+            project:"Update website content",
             priority:"Medium",
             color:"lightwarning",
-            budget:"24.5k"
+            budget:"25 Sep 2025"
         },
         {
             key:"performerData3",
             profileImg:userimg3,
-            username:"Nirav Joshi",
+            username:"Anil Verma",
             designation:"Web Manager",
-            project:"Material Pro",
+            project:"Fix login issue",
             priority:"High",
             color:"lightwarning",
-            budget:"12.8k"
+            budget:"22 Sep 2025"
         },
         {
             key:"performerData4",
             profileImg:userimg4,
-            username:"Yuvraj Sheth",
+            username:"Kavita Singh",
             designation:"Project Manager",
-            project:"Xtreme Admin",
+            project:"Submit timesheet",
             priority:"Low",
             color:"lightsuccess",
-            budget:"4.8k"
+            budget:"20 Sep 2025"
         },
         {
             key:"performerData5",
             profileImg:userimg5,
-            username:"Micheal Doe",
+            username:"Manoj Patel",
             designation:"Content Writer",
-            project:"Helping Hands WP Theme",
+            project:"Client meeting preparation",
             priority:"High",
             color:"lighterror",
-            budget:"9.3k"
+            budget:"18 Sep 2025"
         },
     ]
     return (
         <CardBox>
             <div className="sm:flex items-center justify-between mb-6">
                 <div>
-                    <h5 className="card-title">Top Performers</h5>
-                    <p className="card-subtitle">Best employees</p>
+                    <h5 className="card-title">Reminder Chart</h5>
                 </div>
                 <div className="sm:mt-0 mt-4">
                     <Select className="form-control select-md" >
@@ -87,13 +86,13 @@ export const TopPerformer = () => {
                 Assigned
               </Table.HeadCell>
               <Table.HeadCell className="text-sm font-semibold">
-                Project
+                Reminders
               </Table.HeadCell>
               <Table.HeadCell className="text-sm font-semibold">
                 Priority
               </Table.HeadCell>
               <Table.HeadCell className="text-sm font-semibold">
-                Budget
+                Due Date
               </Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y divide-border dark:divide-darkborder ">

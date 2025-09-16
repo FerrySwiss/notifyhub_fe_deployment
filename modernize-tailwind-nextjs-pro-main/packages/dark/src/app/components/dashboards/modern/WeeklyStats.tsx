@@ -57,30 +57,30 @@ export const WeeklyStats = () => {
     const SalesData = [
         {
             key:"topSales",
-            title:"Top Sales",
-            subtitle:"Johnathan Doe",
+            title:"Top Reminder",
+            subtitle:"Submit timesheet",
             badgeColor:"lightprimary",
             bgcolor:"bg-lightprimary text-primary"
         },
         {
             key:"topSeller",
-            title:"Best Seller",
-            subtitle:"MaterialPro Admin",
+            title:"Most Urgent",
+            subtitle:"Fix login issue",
             badgeColor:"lightsuccess",
             bgcolor:"bg-lightsuccess text-success"
         },
         {
             key:"topCommented",
-            title:" Most Commented",
-            subtitle:"Ample Admin",
+            title:"Most Discussed",
+            subtitle:"Client meeting preparation",
             badgeColor:"lighterror",
             bgcolor:"bg-lighterror text-error"
         }
     ]
     return (
         <CardBox>
-            <h5 className="card-title">Weekly Stats</h5>
-            <p className="card-subtitle">Average sales</p>
+            <h5 className="card-title">Reminder Stats</h5>
+            <p className="card-subtitle">Upcoming tasks this week</p>
             <div className="my-6">
             <Chart
                  options={ChartData}
