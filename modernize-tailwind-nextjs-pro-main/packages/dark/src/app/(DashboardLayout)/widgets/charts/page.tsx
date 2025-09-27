@@ -67,7 +67,7 @@ const Charts = () => {
           </div>
         </div>
         <div className="lg:col-span-4 col-span-12">
-          <RevenueUpdates />
+          {/* <RevenueUpdates /> */}
           <SalesOverview />
         </div>
       </div>

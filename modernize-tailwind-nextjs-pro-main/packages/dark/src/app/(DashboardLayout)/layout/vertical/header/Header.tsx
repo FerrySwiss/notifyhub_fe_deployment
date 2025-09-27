@@ -82,14 +82,14 @@ const Header = ({ layoutType }: HeaderPropsType) => {
           </span>
           {/* Toggle Icon   */}
           <Navbar.Collapse className="xl:block ">
-            <div className="flex gap-0 items-center relative">
+            {/* <div className="flex gap-0 items-center relative">
               {layoutType == "horizontal" ? (
                 <div className="me-3">
                   <FullLogo />
                 </div>
-              ) : null}
+              ) : null} */}
               {/* Toggle Menu    */}
-              {layoutType != "horizontal" ? (
+              {/* {layoutType != "horizontal" ? (
                 <span
                   onClick={() => {
                     if (isCollapse === "full-sidebar") {
@@ -102,25 +102,26 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                 >
                   <Icon icon="tabler:menu-2" height={20} />
                 </span>
-              ) : null}
+              ) : null} */}
 
-              <Search />
+              {/* <Search /> */}
 
               {/* App Link Dropwown   */}
-              <AppLinks  />
+              {/* <AppLinks  /> */}
 
               {/* Chat */}
-              <Link href="/apps/chats" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Chat</Link>
+              {/* <Link href="/apps/chats" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Chat</Link> */}
 
               {/* Calendar */}
-              <Link href="/apps/calendar" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Calendar</Link>
+              {/* <Link href="/apps/calendar" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Calendar</Link> */}
 
               {/* Email */}
-              <Link href="/apps/email" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Email</Link>
-            </div>
-          </Navbar.Collapse>
+              {/* <Link href="/apps/email" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Email</Link> */}
+            {/* </div>
+          
 
           {/* mobile-logo */}
+           </Navbar.Collapse>
           <div className="block xl:hidden">
             <FullLogo />
           </div>

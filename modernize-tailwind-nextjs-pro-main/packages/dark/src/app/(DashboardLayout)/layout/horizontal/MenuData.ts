@@ -88,171 +88,171 @@ const Menuitems = [
       // }
     ],
   },
-  {
-    id: uniqueId(),
-    title: "Apps",
-    icon: "tabler:archive",
-    href: "",
-    children: [
-      {
-        id: uniqueId(),
-        title: "Calendar",
-        icon: "tabler:calendar",
-        href: "/apps/calendar",
-      },
-      {
-        id: uniqueId(),
-        title: "Kanban",
-        icon: "tabler:layout-kanban",
-        href: "/apps/kanban",
-      },
-      {
-        id: uniqueId(),
-        title: "Chats",
-        icon: "tabler:message-dots",
-        href: "/apps/chats",
-      },
+  // {
+  //   id: uniqueId(),
+  //   title: "Apps",
+  //   icon: "tabler:archive",
+  //   href: "",
+  //   children: [
+  //     {
+  //       id: uniqueId(),
+  //       title: "Calendar",
+  //       icon: "tabler:calendar",
+  //       href: "/apps/calendar",
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: "Kanban",
+  //       icon: "tabler:layout-kanban",
+  //       href: "/apps/kanban",
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: "Chats",
+  //       icon: "tabler:message-dots",
+  //       href: "/apps/chats",
+  //     },
 
-      {
-        id: uniqueId(),
-        title: "Email",
-        icon: "tabler:mail",
-        href: "/apps/email",
-      },
+  //     {
+  //       id: uniqueId(),
+  //       title: "Email",
+  //       icon: "tabler:mail",
+  //       href: "/apps/email",
+  //     },
       
-      {
-        id: uniqueId(),
-        title: "Notes",
-        icon: "tabler:notes",
-        href: "/apps/notes",
-      },
-      {
-        id: uniqueId(),
-        title: "Contacts",
-        icon: "tabler:phone",
-        href: "/apps/contacts",
-      },
-      {
-        title: "Invoice",
-        id: uniqueId(),
-        icon: "tabler:file-text",
-        href:"",
-        children: [
-          {
-            id: uniqueId(),
-            title: "List",
-            href: "/apps/invoice/list",
-          },
-          {
-            id: uniqueId(),
-            title: "Details",
-            href: "/apps/invoice/detail/PineappleInc",
-          },
-          {
-            id: uniqueId(),
-            title: "Create",
-            href: "/apps/invoice/create",
-          },
-          {
-            id: uniqueId(),
-            title: "Edit",
-            href: "/apps/invoice/edit/PineappleInc",
-          },
-        ],
-      },
-      {
-        title: "User Profile",
-        id: uniqueId(),
-        icon: "tabler:user-circle",
-        href:"",
-        children: [
-          {
-            id: uniqueId(),
-            title: "Profile",
-            href: "/apps/user-profile/profile",
-          },
-          {
-            id: uniqueId(),
-            title: "Followers",
-            href: "/apps/user-profile/followers",
-          },
-          {
-            id: uniqueId(),
-            title: "Friends",
-            href: "/apps/user-profile/friends",
-          },
-          {
-            id: uniqueId(),
-            title: "Gallery",
-            href: "/apps/user-profile/gallery",
-          },
-        ],
-      },
-      {
-        title: "Blogs",
-        id: uniqueId(),
-        icon: "tabler:chart-donut-3",
-        href:"",
-        children: [
-          {
-            id: uniqueId(),
-            title: "Blog Post",
-            href: "/apps/blog/post",
-          },
-          {
-            id: uniqueId(),
-            title: "Blog Detail",
-            href: "/apps/blog/detail/streaming-video-way-before-it-was-cool-go-dark-tomorrow",
-          },
-        ],
-      },
-      {
-        title: "Ecommerce",
-        id: uniqueId(),
-        icon: "tabler:basket",
-        href:"",
-        children: [
-          {
-            id: uniqueId(),
-            title: "Shop",
-            href: "/apps/ecommerce/shop",
-          },
-          {
-            id: uniqueId(),
-            title: "Details",
-            href: "/apps/ecommerce/detail/3",
-          },
-          {
-            id: uniqueId(),
-            title: "List",
-            href: "/apps/ecommerce/list",
-          },
-          {
-            id: uniqueId(),
-            title: "Checkout",
-            href: "/apps/ecommerce/checkout",
-          },
-          {
-            id: uniqueId(),
-            title: "Add Product",
-            href: "/apps/ecommerce/addproduct",
-          },
-          {
-            id: uniqueId(),
-            title: "Edit Product",
-            href: "/apps/ecommerce/editproduct",
-          },
-        ],
-      },
-      {
-        id: uniqueId(),
-        title: "Tickets",
-        icon: "tabler:list-details",
-        href: "/apps/tickets",
-      },
+  //     {
+  //       id: uniqueId(),
+  //       title: "Notes",
+  //       icon: "tabler:notes",
+  //       href: "/apps/notes",
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: "Contacts",
+  //       icon: "tabler:phone",
+  //       href: "/apps/contacts",
+  //     },
+  //     {
+  //       title: "Invoice",
+  //       id: uniqueId(),
+  //       icon: "tabler:file-text",
+  //       href:"",
+  //       children: [
+  //         {
+  //           id: uniqueId(),
+  //           title: "List",
+  //           href: "/apps/invoice/list",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Details",
+  //           href: "/apps/invoice/detail/PineappleInc",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Create",
+  //           href: "/apps/invoice/create",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Edit",
+  //           href: "/apps/invoice/edit/PineappleInc",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       title: "User Profile",
+  //       id: uniqueId(),
+  //       icon: "tabler:user-circle",
+  //       href:"",
+  //       children: [
+  //         {
+  //           id: uniqueId(),
+  //           title: "Profile",
+  //           href: "/apps/user-profile/profile",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Followers",
+  //           href: "/apps/user-profile/followers",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Friends",
+  //           href: "/apps/user-profile/friends",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Gallery",
+  //           href: "/apps/user-profile/gallery",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       title: "Blogs",
+  //       id: uniqueId(),
+  //       icon: "tabler:chart-donut-3",
+  //       href:"",
+  //       children: [
+  //         {
+  //           id: uniqueId(),
+  //           title: "Blog Post",
+  //           href: "/apps/blog/post",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Blog Detail",
+  //           href: "/apps/blog/detail/streaming-video-way-before-it-was-cool-go-dark-tomorrow",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       title: "Ecommerce",
+  //       id: uniqueId(),
+  //       icon: "tabler:basket",
+  //       href:"",
+  //       children: [
+  //         {
+  //           id: uniqueId(),
+  //           title: "Shop",
+  //           href: "/apps/ecommerce/shop",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Details",
+  //           href: "/apps/ecommerce/detail/3",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "List",
+  //           href: "/apps/ecommerce/list",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Checkout",
+  //           href: "/apps/ecommerce/checkout",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Add Product",
+  //           href: "/apps/ecommerce/addproduct",
+  //         },
+  //         {
+  //           id: uniqueId(),
+  //           title: "Edit Product",
+  //           href: "/apps/ecommerce/editproduct",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: "Tickets",
+  //       icon: "tabler:list-details",
+  //       href: "/apps/tickets",
+  //     },
 
-    ],
-  },
+  //   ],
+  // },
 
   {
     id: uniqueId(),

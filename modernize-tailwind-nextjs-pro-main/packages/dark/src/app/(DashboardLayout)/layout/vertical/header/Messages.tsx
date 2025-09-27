@@ -25,7 +25,7 @@ const Messages = () => {
         )}
       >
         <div className="flex items-center  px-6 justify-between">
-          <h3 className="mb-0 text-lg font-semibold text-ld">Notification</h3>
+          <h3 className="mb-0 text-lg font-semibold text-ld">Recent Reminders</h3>
           <Badge color={"primary"}>5 new</Badge>
         </div>
         <SimpleBar className="max-h-80 mt-3">
@@ -65,7 +65,7 @@ const Messages = () => {
             pill
             outline
           >
-            See All Notifications
+            See All Reminders
           </Button>
         </div>
       </Dropdown>

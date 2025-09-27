@@ -127,7 +127,7 @@
     "Auth":"مصادقة",
     "Others":"آحرون",
 
-    "Icons":"أيقونات", 
+    "Icons":"أيقونات",
     "Solar Icons":"أيقونات شمسية",
     "Tabler Icons":"أيقونات الجدول",
 
@@ -166,5 +166,12 @@
     "Blog":"مدونة",
     "Blog Details":"تفاصيل المدونة",
     "Contact Us":"اتصل بنا",
-    "Portfolio":"مَلَفّ"
-  }
+    "Portfolio":"مَلَفّ",
+
+    "Dashboard": "لوحة القيادة",
+    "Recent Reminders": "تذكيرات حديثة",
+    "Reminder List": "قائمة التذكيرات",
+    "Account Settings": "إعدادات الحساب",
+    "Department": "قسم",
+    "Users": "المستخدمين"
+}

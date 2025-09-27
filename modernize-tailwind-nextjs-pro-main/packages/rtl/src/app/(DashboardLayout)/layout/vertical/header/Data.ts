@@ -193,18 +193,7 @@ const profileDD: ProfileType[] = [
     subtitle: "Account settings",
     url: "/apps/user-profile/profile",
   },
-  {
-    img: inboxIcon,
-    title: "My Notes",
-    subtitle: "My Daily Notes",
-    url: "/apps/notes",
-  },
-  {
-    img: taskIcon,
-    title: "My Tasks",
-    subtitle: "To-do and Daily tasks",
-    url: "/apps/kanban",
-  },
+  
 ];
 
 export {

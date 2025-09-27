@@ -2,7 +2,7 @@ import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Bre
 import UserProfileApp from "@/app/components/apps/userprofile/profile";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "User Profile App",
+  title: "Account Settings",
 };
 
 const BCrumb = [
@@ -11,13 +11,13 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "User Profile",
+    title: "Account Settings",
   },
 ];
 const UserProfile = () => {
   return (
     <>
-      <BreadcrumbComp title="User Profile" items={BCrumb} />
+      <BreadcrumbComp title="Account Settings" items={BCrumb} />
       <UserProfileApp />
     </>
   );

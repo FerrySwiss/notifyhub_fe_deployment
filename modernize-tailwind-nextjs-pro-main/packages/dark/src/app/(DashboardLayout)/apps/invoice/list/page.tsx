@@ -6,7 +6,7 @@ import InvoiceList from '@/app/components/apps/invoice/Invoice-list/index'
 import { InvoiceProvider } from '@/app/context/InvoiceContext/index';
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Invoice List App",
+  title: "Reminder List",
 };
 const BCrumb = [
     {
@@ -14,13 +14,13 @@ const BCrumb = [
         title: "Home",
     },
     {
-        title: "Invoice List",
+        title: "Reminder List",
     },
 ];
 function List() {
     return (
         <InvoiceProvider>
-            <BreadcrumbComp title="Invoice List" items={BCrumb} />
+            <BreadcrumbComp title="Reminder List" items={BCrumb} />
             <CardBox>
                 <InvoiceList />
             </CardBox>

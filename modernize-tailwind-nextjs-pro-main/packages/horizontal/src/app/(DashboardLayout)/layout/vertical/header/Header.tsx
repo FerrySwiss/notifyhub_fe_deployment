@@ -81,7 +81,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
             <Icon icon="tabler:menu-2" height={20} />
           </span>
           {/* Toggle Icon   */}
-          <Navbar.Collapse className="xl:block ">
+          {/* <Navbar.Collapse className="xl:block "> */}
             <div className="flex gap-0 items-center relative">
               {layoutType == "horizontal" ? (
                 <div className="me-3">
@@ -118,14 +118,14 @@ const Header = ({ layoutType }: HeaderPropsType) => {
               {/* Email */}
               <Link href="/apps/email" className="text-sm text-link dark:text-darklink dark:hover:text-primary px-15 h-10 hover:text-primary flex items-center justify-center" >Email</Link>
             </div>
-          </Navbar.Collapse>
+          {/* </Navbar.Collapse> */}
 
           {/* mobile-logo */}
           <div className="block xl:hidden">
             <FullLogo />
           </div>
 
-          <Navbar.Collapse className="xl:block hidden">
+          {/* <Navbar.Collapse className="xl:block hidden"> */}
             <div className="flex gap-0 items-center">
               {/* Theme Toggle */}
               {activeMode === "light" ? (
@@ -171,7 +171,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
               {/* Profile Dropdown */}
               <Profile  />
             </div>
-          </Navbar.Collapse>
+          {/* </Navbar.Collapse> */}
           {/* Mobile Toggle Icon */}
           <span
             className="h-10 w-10 flex xl:hidden hover:text-primary hover:bg-lightprimary rounded-full justify-center items-center cursor-pointer"

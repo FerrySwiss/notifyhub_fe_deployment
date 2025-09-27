@@ -14,13 +14,13 @@ const BCrumb = [
         title: "Home",
     },
     {
-        title: "Invoice List",
+        title: "Reminder List",
     },
 ];
 function List() {
     return (
         <InvoiceProvider>
-            <BreadcrumbComp title="Invoice List" items={BCrumb} />
+            <BreadcrumbComp title="Reminder List" items={BCrumb} />
             <CardBox>
                 <InvoiceList />
             </CardBox>

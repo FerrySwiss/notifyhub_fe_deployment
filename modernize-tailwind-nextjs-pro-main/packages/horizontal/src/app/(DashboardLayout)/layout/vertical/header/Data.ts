@@ -148,29 +148,29 @@ import avatar5 from "/public/images/profile/user-6.jpg";
 const MessagesLink: MessageType[] = [
   {
     avatar: avatar1,
-    title: "Roman Joined the Team!",
-    subtitle: "Congratulate him",
+    title: "Complete UI Design for Beinex",
+  subtitle: "Finish the UI design for Beinex within the next two days."
   },
   {
     avatar: avatar2,
-    title: "New message",
-    subtitle: "Salma sent you new message",
+    title: "Review the new wireframes",
+    subtitle: "Check the wireframes for the mobile app by tomorrow."
   },
   {
     avatar: avatar3,
-    title: "Bianca sent payment",
-    subtitle: "Check your earnings",
+    title: "Develop the login screen",
+    subtitle: "Start coding the user login screen as a high priority."
   },
   {
     avatar: avatar4,
-    title: "Jolly completed tasks",
-    subtitle: "Assign her new tasks",
+    title: "Fix the checkout bug",
+    subtitle: "Debug and fix the bug in the e-commerce checkout process today."
   },
   {
     avatar: avatar5,
-    title: "John received payment",
-    subtitle: "$230 deducted from account",
-  },
+    title: "Prepare for client meeting",
+    subtitle: "Gather all project documents for the 2 PM meeting with the client."
+  }
 ];
 
 
@@ -193,18 +193,18 @@ const profileDD: ProfileType[] = [
     subtitle: "Account settings",
     url: "/apps/user-profile/profile",
   },
-  {
-    img: inboxIcon,
-    title: "My Notes",
-    subtitle: "My Daily Notes",
-    url: "/apps/notes",
-  },
-  {
-    img: taskIcon,
-    title: "My Tasks",
-    subtitle: "To-do and Daily tasks",
-    url: "/apps/kanban",
-  },
+  // {
+  //   img: inboxIcon,
+  //   title: "My Notes",
+  //   subtitle: "My Daily Notes",
+  //   url: "/apps/notes",
+  // },
+  // {
+  //   img: taskIcon,
+  //   title: "My Tasks",
+  //   subtitle: "To-do and Daily tasks",
+  //   url: "/apps/kanban",
+  // },
 ];
 
 export {

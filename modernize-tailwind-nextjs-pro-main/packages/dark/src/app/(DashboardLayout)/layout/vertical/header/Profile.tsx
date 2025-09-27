@@ -38,13 +38,13 @@ const Profile = () => {
             />
             <div>
               <h5 className="card-title text-sm  mb-0.5 font-medium">Mathew Anderson</h5>
-              <span className="card-subtitle text-muted font-normal">Designer</span>
+              <span className="card-subtitle text-muted font-normal">Company Name</span>
               <p className="card-subtitle font-normal text-muted mb-0 mt-1 flex items-center">
                 <Icon
                   icon="tabler:mail"
                   className="text-base me-1 relative top-0.5"
                 />
-                info@modernize.com
+                info@notifyhub.com
               </p>
             </div>
           </div>
@@ -77,19 +77,7 @@ const Profile = () => {
         </SimpleBar>
 
         <div className="upgrade-plan bg-primary-subtle position-relative overflow-hidden rounded-4 m-30 my-4 rounded-md  bg-lightprimary">
-                            <div className="grid grid-cols-12 p-6 gap-6">
-                              <div className="col-span-6">
-                                <h5 className="text-base mb-3.5 font-semibold leading-5">Unlimited Access</h5>
-                                <Button color={"primary"} className=" rounded-md" >
-                                  <span className="leading-4" >Upgrade</span>
-                                </Button>
-                              </div>
-                              <div className="col-span-6">
-                                <div className="-m-6 unlimited-img">
-                                  <Image src={unlimitedbg} alt="modernize-img" className="w-100 scale-[1.17] rtl:-scale-[1.17]"/>
-                                </div>
-                              </div>
-                            </div>
+                            {/*  */}
                           </div>
 
         <div className="pt-2 px-30">

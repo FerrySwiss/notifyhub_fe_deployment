@@ -12,20 +12,16 @@ const ProfileTab = () => {
       to: "/apps/user-profile/profile",
     },
     {
-      label: "Followers",
+      label: "Department",
       icon: "tabler:heart",
       to: "/apps/user-profile/followers",
     },
     {
-      label: "Friends",
+      label: "users",
       icon: "tabler:user-circle",
       to: "/apps/user-profile/friends",
     },
-    {
-      label: "Gallery",
-      icon: "tabler:photo-plus",
-      to: "/apps/user-profile/gallery",
-    },
+   
   ];
 
   return (

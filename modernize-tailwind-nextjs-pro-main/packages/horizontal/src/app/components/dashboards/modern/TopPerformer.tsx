@@ -1,5 +1,5 @@
 "use client"
-import { Badge, Select, Table } from "flowbite-react"
+import { Badge, Table, Button, Modal } from "flowbite-react"
 import CardBox from "../../shared/CardBox"
 import userimg1 from "/public/images/profile/user-3.jpg";
 import userimg2 from "/public/images/profile/user-5.jpg";
@@ -7,8 +7,11 @@ import userimg3 from "/public/images/profile/user-6.jpg";
 import userimg4 from "/public/images/profile/user-7.jpg";
 import userimg5 from "/public/images/profile/user-8.jpg";
 import Image from "next/image";
+import { useState } from "react";
 
 export const TopPerformer = () => {
+    const [openModal, setOpenModal] = useState(false);
+    
     const PerformersData = [
         {
             key:"performerData1",
@@ -61,78 +64,100 @@ export const TopPerformer = () => {
             budget:"18 Sep 2025"
         },
     ]
-    return (
-        <CardBox>
-            <div className="sm:flex items-center justify-between mb-6">
-                <div>
-                    <h5 className="card-title">Reminder Chart</h5>
-                </div>
-                <div className="sm:mt-0 mt-4">
-                    <Select className="form-control select-md" >
-                        <option>March 2024</option>
-                        <option>April 2024</option>
-                        <option>May 2024</option>
-                        <option>June 2024</option>
-                    </Select>
-                </div>
-            </div>
-            <div className="flex flex-col">
-                <div className="-m-1.5 overflow-x-auto">
-                    <div className="p-1.5 min-w-full inline-block align-middle">
-                        <div className="overflow-x-auto">
-         <Table>
-            <Table.Head>
-              <Table.HeadCell className="text-sm font-semibold ps-0">
-                Assigned
-              </Table.HeadCell>
-              <Table.HeadCell className="text-sm font-semibold">
-                Reminders
-              </Table.HeadCell>
-              <Table.HeadCell className="text-sm font-semibold">
-                Priority
-              </Table.HeadCell>
-              <Table.HeadCell className="text-sm font-semibold">
-                Due Date
-              </Table.HeadCell>
-            </Table.Head>
-            <Table.Body className="divide-y divide-border dark:divide-darkborder ">
-              {PerformersData.map((item, index) => (
-                <Table.Row key={index}>
-                  <Table.Cell className="whitespace-nowrap ps-0 md:min-w-auto min-w-[200px]">
-                    <div className="flex gap-3 items-center">
-                      <Image
-                        src={item.profileImg}
-                        alt="icon"
-                        className="h-8 w-8 rounded-full"
-                      />
-                      <div>
-                      <h6 className="text-sm font-semibold mb-1">{item.username}</h6>
-                      <p className="text-xs font-normal text-bodytext dark:text-darklink">Web Designer</p>
-                      </div>
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap">
-                    <p className="text-link dark:text-darklink text-sm w-fit">
-                      {item.project}
-                    </p>
-                  </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap">
-                    <Badge color={`${item.color}`} className="text-sm rounded-md py-1.1 px-2 w-11/12 justify-center" >{item.priority}</Badge>
-                  </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap">
-                    <p className="dark:text-darklink text-link text-sm">
-                      {item.budget}
-                    </p>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </CardBox>
 
+    const renderTableRows = (data) => (
+        <Table.Body className="divide-y divide-border dark:divide-darkborder">
+            {data.map((item, index) => (
+                <Table.Row key={index}>
+                    <Table.Cell className="whitespace-nowrap ps-0 md:min-w-auto min-w-[200px]">
+                        <div className="flex gap-3 items-center">
+                            <Image
+                                src={item.profileImg}
+                                alt="icon"
+                                className="h-8 w-8 rounded-full"
+                            />
+                            <div>
+                                <h6 className="text-sm font-semibold mb-1">{item.username}</h6>
+                                <p className="text-xs font-normal text-bodytext dark:text-darklink">
+                                    {item.designation}
+                                </p>
+                            </div>
+                        </div>
+                    </Table.Cell>
+                    <Table.Cell>
+                        <p className="text-link dark:text-darklink text-sm w-fit">
+                            {item.project}
+                        </p>
+                    </Table.Cell>
+                    <Table.Cell>
+                        <Badge 
+                            color={`${item.color}`} 
+                            className="text-sm rounded-md py-1.1 px-2 w-11/12 justify-center" 
+                        >
+                            {item.priority}
+                        </Badge>
+                    </Table.Cell>
+                    <Table.Cell>
+                        <p className="dark:text-darklink text-link text-sm">
+                            {item.budget}
+                        </p>
+                    </Table.Cell>
+                </Table.Row>
+            ))}
+        </Table.Body>
+    );
+
+    const renderTable = (data) => (
+        <div className="flex flex-col">
+            <div className="-m-1.5 overflow-x-auto">
+                <div className="p-1.5 min-w-full inline-block align-middle">
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <Table.Head>
+                                <Table.HeadCell className="text-sm font-semibold ps-0">
+                                    Assigned
+                                </Table.HeadCell>
+                                <Table.HeadCell className="text-sm font-semibold">
+                                    Reminders
+                                </Table.Head.Cell>
+                                <Table.HeadCell className="text-sm font-semibold">
+                                    Priority
+                                </Table.HeadCell>
+                                <Table.HeadCell className="text-sm font-semibold">
+                                    Due Date
+                                </Table.HeadCell>
+                            </Table.Head>
+                            {renderTableRows(data)}
+                        </Table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <>
+            <CardBox>
+                <div className="sm:flex items-center justify-between mb-6">
+                    <div>
+                        <h5 className="card-title">Reminder Chart</h5>
+                    </div>
+                    <div className="sm:mt-0 mt-4">
+                        <Button color="blue" size="sm" onClick={() => setOpenModal(true)} className="flex items-center justify-center rounded-md gap-3 !text-sm text-start leading-[normal] font-normal text-link dark:text-darklink dark:hover:text-primary !text-white bg-primary mb-0.5 hover:bg-primary hover:text-white">
+                            View All
+                        </Button>
+                    </div>
+                </div>
+                {/* Table (only few items preview) */}
+                {renderTable(PerformersData.slice(0, 3))}
+            </CardBox>
+
+            <Modal show={openModal} onClose={() => setOpenModal(false)} popup>
+                <Modal.Header>All Reminders</Modal.Header>
+                <Modal.Body>
+                    {renderTable(PerformersData)}
+                </Modal.Body>
+            </Modal>
+        </>
     )
 }

@@ -3,7 +3,7 @@ import React from "react";
 import type { Metadata } from "next";
 import CreateInvoiceApp from "@/app/components/apps/invoice/Add-invoice";
 export const metadata: Metadata = {
-  title: "Invoice Create App",
+  title: "create a new reminder",
 };
 const BCrumb = [
   {
@@ -11,13 +11,13 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Invoice Create",
+    title: "Create a new Reminder",
   },
 ];
 function CreateList() {
   return (
     <>
-      <BreadcrumbComp title=" Create A New Invoice " items={BCrumb} />
+      <BreadcrumbComp title=" Create A New Reminder " items={BCrumb} />
       <CreateInvoiceApp />
     </>
   );

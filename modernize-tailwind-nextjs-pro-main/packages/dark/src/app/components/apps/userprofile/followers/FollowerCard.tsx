@@ -11,7 +11,7 @@ const FollowerCard = () => {
     <>
       <div className="md:flex justify-between mb-6">
         <h5 className="text-2xl flex gap-3 items-center sm:my-0 my-4">
-          Followers <Badge color={"secondary"} className="rounded-md">{followers.length}</Badge>
+          Departments<Badge color={"secondary"} className="rounded-md">{followers.length}</Badge>
         </h5>
         <TextInput
           icon={() => <Icon icon="tabler:search" height={18} />}
@@ -46,17 +46,10 @@ const FollowerCard = () => {
                         size={'sm'}
                         onClick={() => toggleFollow(profile.id)}
                       >
-                        Followed
+                        Remove
                       </Button>
                     ) : (
-                      <Button
-                        color={"outlineprimary"}
-                        className="rounded-md"
-                        size={'sm'}
-                        onClick={() => toggleFollow(profile.id)}
-                      >
-                        Follow
-                      </Button>
+                      <div></div>
                     )}
                   </div>
                 </div>
@@ -68,5 +61,4 @@ const FollowerCard = () => {
     </>
   );
 };
-
 export default FollowerCard;
