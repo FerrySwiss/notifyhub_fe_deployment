@@ -44,7 +44,7 @@ const Register = () => {
             <div className="flex justify-center items-center gap-2 text-sm text-gray-600">
               <p>Already have an account?</p>
               <Link
-                href="/auth/OtpAuth"
+                href="/two-steps/OtpForm"
                 className="text-blue-600 hover:underline font-medium"
               >
                 Sign In

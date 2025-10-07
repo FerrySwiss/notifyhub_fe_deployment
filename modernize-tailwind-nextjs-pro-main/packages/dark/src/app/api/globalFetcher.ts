@@ -55,4 +55,20 @@ const deleteFetcher = (url:string , arg:any) => fetch(url,{
     return res.json()
 })
 
-export {getFetcher,postFetcher,putFetcher,deleteFetcher, patchFetcher}
+const graphqlFetcher = (key: [string, any]) => {
+  const [query, variables] = key;
+  return fetch("https://graphqlzero.almansi.me/api", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query, variables }),
+  }).then((res) => {
+    if (!res.ok) {
+      throw new Error("Failed to fetch the data");
+    }
+    return res.json();
+  });
+};
+
+export {getFetcher,postFetcher,putFetcher,deleteFetcher, patchFetcher, graphqlFetcher}

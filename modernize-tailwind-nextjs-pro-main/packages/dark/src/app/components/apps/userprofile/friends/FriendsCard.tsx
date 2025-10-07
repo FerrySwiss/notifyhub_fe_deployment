@@ -5,7 +5,7 @@ import {
   TbBrandInstagram,
   TbBrandTwitter,
 } from "react-icons/tb";
-import { Badge, TextInput } from "flowbite-react";
+import { Badge, TextInput, Button } from "flowbite-react";
 import { Icon } from "@iconify/react";
 import CardBox from "@/app/components/shared/CardBox";
 import Image from "next/image";
@@ -33,7 +33,7 @@ const socialiconCard = [
 ];
 
 const FriendsCard = () => {
-  const { followers, setSearch, userDepartments }: any =
+  const { followers, setFollowerSearch, departments }: any =
     useContext(UserDataContext);
 
   return (
@@ -42,49 +42,41 @@ const FriendsCard = () => {
         <h5 className="text-2xl flex gap-3 items-center sm:my-0 my-4">
           Users<Badge color={"secondary"}>{followers.length}</Badge>
         </h5>
-        <TextInput
-          icon={() => <Icon icon="tabler:search" height={18} />}
-          type="text"
-          sizing="md"
-          className="form-control "
-          placeholder="Search Friends"
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="flex gap-3">
+          <TextInput
+            icon={() => <Icon icon="tabler:search" height={18} />}
+            type="text"
+            sizing="md"
+            className="form-control "
+            placeholder="Search Friends"
+            onChange={(e) => setFollowerSearch(e.target.value)}
+          />
+          <Link href="/apps/user-profile/users/create">
+            <Button color="primary">Add User</Button>
+          </Link>
+        </div>
       </div>
       <div className="grid grid-cols-12 gap-6">
         {followers.map(
           (profile: {
             id: React.Key | null | undefined;
-            avatar: string | StaticImport;
-            name: string | React.ReactNode;
-            role: string | React.ReactNode;
+            name: string;
+            username: string;
+            email: string;
           }) => {
-            // find matching department by user id
-            // const deptUser = userDepartments.find(
-            //   (u: any) => u.id === profile.id
-            // );
-
             return (
               <div
                 className="lg:col-span-4 md:col-span-4 sm:col-span-6 col-span-12"
                 key={profile.id}
               >
                 <CardBox className="px-0 pb-0 text-center overflow-hidden">
-                  <Image
-                    src={profile.avatar}
-                    alt="profile"
-                    className="rounded-full mx-auto"
-                    height={80}
-                    width={80}
-                  />
+                  <div className="flex items-center justify-center w-20 h-20 bg-lightprimary rounded-full mx-auto">
+                    <Icon icon="tabler:user" height="48" className="text-primary" />
+                  </div>
                   <div>
                     <h5 className="text-lg mt-3">{profile.name}</h5>
-                    <p className="text-xs text-darklink">{profile.role}</p>
-                    {/* {deptUser && (
-                      <p className="text-xs text-gray-500">
-                        {deptUser.department}
-                      </p>
-                    )} */}
+                    <p className="text-xs text-darklink">@{profile.username}</p>
+                    <p className="text-xs text-gray-500">{profile.email}</p>
                   </div>
                   <div className="flex justify-center gap-4 items-center border-t border-border dark:border-darkborder mt-4 pt-4 bg-lightgray pb-4 dark:bg-darkmuted">
                     {socialiconCard.map((soc, index) => (

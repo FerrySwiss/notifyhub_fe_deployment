@@ -1,14 +1,15 @@
 import React from "react";
 import type { Metadata } from "next";
-import {Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 import "./css/globals.css";
 import { Flowbite, ThemeModeScript } from "flowbite-react";
 import customTheme from "@/utils/theme/custom-theme";
 import { CustomizerContextProvider } from "@/app/context/CustomizerContext";
-import '../utils/i18n';
-import NextTopLoader from 'nextjs-toploader';
+import "../utils/i18n";
+import NextTopLoader from "nextjs-toploader";
 
+import ApolloProviderWrapper from "@/providers/ApolloProviderWrapper";
 
 export const metadata: Metadata = {
   title: "Modernize - Nextjs",
@@ -21,25 +22,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <ThemeModeScript />
       </head>
       <body className={`${plus_jakarta_sans.className}`}>
-      
-        <Flowbite theme={{ theme: customTheme }}>
-          <CustomizerContextProvider>
-          <NextTopLoader color="var(--color-primary)" />
-            {children}
-          </CustomizerContextProvider>
-        </Flowbite>
+        <ApolloProviderWrapper>
+          <Flowbite theme={{ theme: customTheme }}>
+            <CustomizerContextProvider>
+              <NextTopLoader color="var(--color-primary)" />
+              {children}
+            </CustomizerContextProvider>
+          </Flowbite>
+        </ApolloProviderWrapper>
       </body>
     </html>
-
   );
 }
-
-
-

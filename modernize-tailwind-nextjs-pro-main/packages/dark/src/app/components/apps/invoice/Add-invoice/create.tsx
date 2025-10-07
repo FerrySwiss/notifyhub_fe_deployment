@@ -1,144 +1,185 @@
-"use client"
-import { useState, useEffect } from "react";
-import { Alert, Button, Label, Select, TextInput, Table, Tooltip } from "flowbite-react";
-import { Icon } from "@iconify/react";
-import { format, isValid } from "date-fns";
+"use client";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { Label, TextInput, Select, Button, Alert } from "flowbite-react";
+import { gql, useMutation } from "@apollo/client";
+import { GET_REMINDERS } from "@/app/components/apps/invoice/Invoice-list";
 
-// Dummy data for users to assign the reminder to
-const users = [
-  { id: 1, name: "Rajesh Kumar", role: "Web Designer", avatar: "/images/profile/user-3.jpg" },
-  { id: 2, name: "Priya Sharma", role: "Web Developer", avatar: "/images/profile/user-5.jpg" },
-  { id: 3, name: "Anil Verma", role: "Web Manager", avatar: "/images/profile/user-6.jpg" },
-];
+const CREATE_REMINDER = gql`
+  mutation CreateReminder($input: CreateTodoInput!) {
+    createTodo(input: $input) {
+      id
+      title
+      completed
+    }
+  }
+`;
 
-function CreateInvoice() {
+const CreateInvoice = () => {
   const router = useRouter();
-  const [showAlert, setShowAlert] = useState(false);
   const [formData, setFormData] = useState({
-    id: 0,
-    assigned: "",
-    reminder: "",
-    priority: "Low",
-    dueDate: new Date().toISOString().split('T')[0],
-    status: "Pending", 
+    title: "",
+    description: "",
+    sender_email: "",
+    sender_name: "",
+    receiver_email: "",
+    interval_type: "daily",
+    reminder_start_date: "",
+    reminder_end_date: "",
+  });
+  const [formStatus, setFormStatus] = useState({ success: "", error: "" });
+
+  const [createReminder, { loading }] = useMutation(CREATE_REMINDER, {
+    update: (cache, { data: { createTodo } }) => {
+      const data = cache.readQuery({ query: GET_REMINDERS });
+      if (data) {
+        const { todos } = data;
+        cache.writeQuery({
+          query: GET_REMINDERS,
+          data: {
+            todos: {
+              ...todos,
+              data: [createTodo, ...todos.data],
+            },
+          },
+        });
+      }
+    },
+    onCompleted: () => {
+      setFormStatus({ success: "Reminder created successfully!", error: "" });
+      setTimeout(() => router.push("/apps/invoice/list"), 1500);
+    },
+    onError: (err) => {
+      setFormStatus({ success: "", error: err.message });
+    },
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const existingReminders = JSON.parse(sessionStorage.getItem('reminders')) || [];
-      const newReminder = { ...formData, id: Date.now() }; // Use timestamp for unique ID
-      const updatedReminders = [...existingReminders, newReminder];
-      sessionStorage.setItem('reminders', JSON.stringify(updatedReminders));
-
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-        router.push('/apps/invoice/list');
-      }, 5000);
-    } catch (error) {
-      console.error("Error adding reminder:", error);
-    }
+    await createReminder({
+      variables: {
+        input: {
+          title: formData.title,
+          completed: false,
+        },
+      },
+    });
   };
-
-  const parsedDate = isValid(new Date(formData.dueDate)) ? new Date(formData.dueDate) : new Date();
-  const formattedDueDate = format(parsedDate, "EEEE, MMMM dd, yyyy");
 
   return (
-    <div>
-      <h2 className="text-xl mb-6">Add New Reminder Details</h2>
-      <p>ID: {formData.id}</p>
-      <p>Date: {formattedDueDate}</p>
-      <form onSubmit={handleSubmit}>
-        <div className="bg-lightgray dark:bg-gray-800/70 p-6 my-6 rounded-md">
-          <div className="grid grid-cols-12 gap-6">
-            <div className="lg:col-span-6 md:col-span-6 col-span-12">
-              <div className="mb-2 block">
-                <Label htmlFor="assignedTo" value="Assigned To" />
-              </div>
-              <Select
-                id="assignedTo"
-                name="assigned" 
-                value={formData.assigned}
-                onChange={handleChange}
-                className="select-md"
-              >
-                <option value="">Select a user</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.name}>{user.name}</option>
-                ))}
-              </Select>
-            </div>
-            <div className="lg:col-span-6 md:col-span-6 col-span-12">
-              <div className="mb-2 block">
-                <Label htmlFor="reminder" value="Reminder" />
-              </div>
-              <TextInput
-                id="reminder"
-                name="reminder"
-                value={formData.reminder}
-                onChange={handleChange}
-                type="text"
-                className="form-control"
-              />
-            </div>
-            <div className="lg:col-span-6 md:col-span-6 col-span-12">
-              <div className="mb-2 block">
-                <Label htmlFor="priority" value="Priority" />
-              </div>
-              <Select
-                id="priority"
-                name="priority"
-                value={formData.priority}
-                onChange={handleChange}
-                className="select-md"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </Select>
-            </div>
-            <div className="lg:col-span-6 md:col-span-6 col-span-12">
-              <div className="mb-2 block">
-                <Label htmlFor="dueDate" value="Due Date" />
-              </div>
-              <TextInput
-                id="dueDate"
-                name="dueDate"
-                value={formData.dueDate}
-                onChange={handleChange}
-                type="date"
-                className="form-control"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end gap-3 mt-6">
-          <Button color="primary" type="submit">
-            Create Reminder
-          </Button>
-          <Button color={"error"} onClick={() => { router.push('/apps/invoice/list'); }}>
-            Cancel
-          </Button>
-        </div>
-      </form>
-      {showAlert && (
-        <Alert color="warning" rounded className="fixed top-3">
-          Reminder added successfully.
+    <div className="p-6">
+      <h2 className="text-2xl font-semibold mb-6">Create New Reminder</h2>
+
+      {formStatus.success && (
+        <Alert color="success" className="mb-4">
+          {formStatus.success}
         </Alert>
       )}
+      {formStatus.error && (
+        <Alert color="failure" className="mb-4">
+          {formStatus.error}
+        </Alert>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Label htmlFor="title" value="Title" />
+          <TextInput
+            id="title"
+            name="title"
+            placeholder="Reminder Title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="description" value="Description" />
+          <TextInput
+            id="description"
+            name="description"
+            placeholder="Reminder Description"
+            value={formData.description}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="sender_name" value="Sender Name" />
+          <TextInput
+            id="sender_name"
+            name="sender_name"
+            placeholder="Sender Name"
+            value={formData.sender_name}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="sender_email" value="Sender Email" />
+          <TextInput
+            id="sender_email"
+            name="sender_email"
+            type="email"
+            placeholder="Sender Email"
+            value={formData.sender_email}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="receiver_email" value="Receiver Email" />
+          <TextInput
+            id="receiver_email"
+            name="receiver_email"
+            type="email"
+            placeholder="Receiver Email"
+            value={formData.receiver_email}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="interval_type" value="Interval Type" />
+          <Select
+            id="interval_type"
+            name="interval_type"
+            value={formData.interval_type}
+            onChange={handleChange}
+          >
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="reminder_start_date" value="Reminder Start Date" />
+          <TextInput
+            id="reminder_start_date"
+            name="reminder_start_date"
+            type="date"
+            value={formData.reminder_start_date}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="reminder_end_date" value="Reminder End Date" />
+          <TextInput
+            id="reminder_end_date"
+            name="reminder_end_date"
+            type="date"
+            value={formData.reminder_end_date}
+            onChange={handleChange}
+          />
+        </div>
+
+        <Button type="submit" disabled={loading}>
+          {loading ? "Creating..." : "Create Reminder"}
+        </Button>
+      </form>
     </div>
   );
-}
+};
 
 export default CreateInvoice;
