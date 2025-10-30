@@ -36,9 +36,9 @@ const page = () => {
             </div>
           </div>
         </div>
-        <div className="lg:col-span-4 col-span-12">
+        {/* <div className="lg:col-span-4 col-span-12">
             <RevenueUpdate/>
-        </div>
+        </div> */}
         <div className="lg:col-span-4 col-span-12">
             <SalesOverview/>
         </div>

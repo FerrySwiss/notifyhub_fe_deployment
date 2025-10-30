@@ -30,7 +30,7 @@ const pathname = usePathname();
   };
   return (
     <Navbar fluid={true} rounded={true} className="horizontal-nav bg-transparent dark:bg-transparent sm:px-0 xl:py-4 py-0">
-      <Navbar.Collapse className="xl:block">
+      {/* <Navbar.Collapse className="xl:block"> */}
         <ul className="flex items-center space-x-3">
           {Menuitems.map((item) => {
             let isActive = false;
@@ -99,7 +99,7 @@ const pathname = usePathname();
             )
           })}
         </ul>
-      </Navbar.Collapse>
+      {/*  */}
     </Navbar>
   );
 };

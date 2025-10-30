@@ -42,7 +42,7 @@ const AuthLogin = () => {
             Forgot Password ?
           </Link>
         </div>
-        <Button color={"primary"} href="/" as={Link} className="w-full rounded-md">
+        <Button color={"primary"} href="/auth/auth1/two-steps" as={Link} className="w-full rounded-md">
           Sign in
         </Button>
       </form>

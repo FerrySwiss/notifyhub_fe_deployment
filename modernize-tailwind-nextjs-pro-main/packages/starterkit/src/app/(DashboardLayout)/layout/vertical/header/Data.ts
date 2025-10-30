@@ -253,18 +253,18 @@ const profileDD: ProfileType[] = [
     subtitle: "Account settings",
     url: "#",
   },
-  {
-    img: inboxIcon,
-    title: "My Notes",
-    subtitle: "My Daily Notes",
-    url: "#",
-  },
-  {
-    img: taskIcon,
-    title: "My Tasks",
-    subtitle: "To-do and Daily tasks",
-    url: "#",
-  },
+  // {
+  //   img: inboxIcon,
+  //   title: "My Notes",
+  //   subtitle: "My Daily Notes",
+  //   url: "#",
+  // },
+  // {
+  //   img: taskIcon,
+  //   title: "My Tasks",
+  //   subtitle: "To-do and Daily tasks",
+  //   url: "#",
+  // },
 ];
 
 export {

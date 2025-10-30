@@ -2,7 +2,7 @@ import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Bre
 import FriendsApp from "@/app/components/apps/userprofile/friends";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "User Friends",
+  title: "Users",
 };
 
 const BCrumb = [
@@ -11,14 +11,14 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Friends",
+    title: "users",
   },
 ];
 
 const Friends = () => {
   return (
     <>
-      <BreadcrumbComp title="Friends" items={BCrumb} />
+      <BreadcrumbComp title="Users" items={BCrumb} />
       <FriendsApp />
     </>
   );

@@ -141,12 +141,12 @@ export const TopPerformer = () => {
                     <p className="card-subtitle">Best employees</p>
                 </div>
                 <div className="sm:mt-0 mt-4">
-                    <Select className="form-control select-md" >
+                    <div className="form-control select-md" >
                         <option>March 2024</option>
                         <option>April 2024</option>
                         <option>May 2024</option>
                         <option>June 2024</option>
-                    </Select>
+                    </div>
                 </div>
             </div>
             <div className="flex flex-col">

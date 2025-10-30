@@ -39,7 +39,7 @@ const Header = () => {
         <Navbar className="fluid py-6">
           <FullLogo />
           <MobileDrawer/>
-          <Navbar.Collapse className="xl:block hidden">
+          {/* <Navbar.Collapse className="xl:block hidden"> */}
             <DemosMenu />
             <FrontPageMenu/>
             <PagesMenu />
@@ -56,7 +56,7 @@ const Header = () => {
             >
               Login
             </Navbar.Link>
-          </Navbar.Collapse>
+          {/* </Navbar.Collapse> */}
         </Navbar>
       </header>
     </>

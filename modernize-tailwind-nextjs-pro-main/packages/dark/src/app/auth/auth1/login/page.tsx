@@ -1,7 +1,6 @@
 
 import React from "react";
-import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
-import SocialButtons from "../../authforms/SocialButtons";
+
 import AuthLogin from "../../authforms/AuthLogin";
 import LeftSidebarPart from "../LeftSidebarPart";
 import type { Metadata } from "next";
@@ -26,11 +25,11 @@ const Login = () => {
           <div className="xl:col-span-4 lg:col-span-5 col-span-12 sm:px-12 p-5">
             <div className="flex h-screen items-center px-3 lg:justify-start justify-center">
               <div className="max-w-[420px] w-full mx-auto">
-                <h3 className="text-2xl font-bold">Welcome to Modernize</h3>
-                <p className="text-darklink text-sm font-medium">
+                <h3 className="text-2xl font-bold">Welcome to NotifyHub</h3>
+                {/* <p className="text-darklink text-sm font-medium">
                   Your Admin Dashboard
-                </p>
-                <SocialButtons title="or sign in with" />
+                </p> */}
+                {/* <SocialButtons title="or sign in with" /> */}
                 <AuthLogin />
                 <div className="flex gap-2 text-base text-ld font-medium mt-6 items-center justify-center">
                   <p>New to Modernize?</p>

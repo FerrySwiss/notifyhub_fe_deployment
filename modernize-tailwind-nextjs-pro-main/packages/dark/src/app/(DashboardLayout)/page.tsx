@@ -20,17 +20,17 @@ const page = () => {
         <div className="col-span-12">
           <TopCards/>
         </div>
-        <div className="lg:col-span-8 col-span-12 flex">
+        {/* <div className="lg:col-span-8 col-span-12 flex">
           <RevenueUpdate/>
-        </div>
-        <div className="lg:col-span-4 col-span-12 ">
+        </div> */}
+        {/* <div className="lg:col-span-4 col-span-12 ">
           <YearlyBreakup/>
           <MonthlyEarning/>
-        </div>
-        <div className="lg:col-span-4 col-span-12 ">
+        </div> */}
+        {/* <div className="lg:col-span-4 col-span-12 ">
           <EmployeeSalary/>
-        </div>
-        <div className="lg:col-span-4 col-span-12 ">
+        </div> */}
+        {/* <div className="lg:col-span-4 col-span-12 ">
           <div className="grid grid-cols-12 gap-6">
             <div className="lg:col-span-6 col-span-12">
             <Customers/>
@@ -40,10 +40,10 @@ const page = () => {
             </div>
           </div>
           <Social/>
-        </div>
-        <div className="lg:col-span-4 col-span-12">
+        </div> */}
+        {/* <div className="lg:col-span-4 col-span-12">
           <SellingProducts/>
-        </div>
+        </div> */}
         <div className="lg:col-span-4 col-span-12 flex">
           <WeeklyStats/>
         </div>

@@ -81,7 +81,7 @@ const Header = () => {
           <FullLogo />
           </div>
           <MobileDrawer/>
-          <Navbar.Collapse className="xl:block hidden order-1">
+          {/* <Navbar.Collapse className="xl:block hidden order-1"> */}
             {
               Links.map((item)=>{
                 if(!item.isBadge){
@@ -101,7 +101,7 @@ const Header = () => {
               })
             }
 
-          </Navbar.Collapse>
+          {/* </Navbar.Collapse> */}
           <Button color={"primary"} className="lg:block hidden order-2" as={Link} href="/auth/auth1/login" >Login</Button>
         </Navbar>
       </header>

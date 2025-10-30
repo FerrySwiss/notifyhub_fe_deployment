@@ -167,5 +167,12 @@
     "Blog":"部落格",
     "Blog Details":"博客詳細信息",
     "Contact Us":"聯絡我們",
-    "Portfolio":"資料夾"
-  }
+    "Portfolio":"資料夾",
+    
+    "Dashboard": "儀表板",
+    "Recent Reminders": "最近提醒",
+    "Reminder List": "提醒清單",
+    "Account Settings": "帳戶設定",
+    "Department": "部門",
+    "Users": "使用者"
+}

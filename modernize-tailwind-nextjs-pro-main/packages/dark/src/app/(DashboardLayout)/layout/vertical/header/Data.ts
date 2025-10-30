@@ -148,29 +148,29 @@ import avatar5 from "/public/images/profile/user-6.jpg";
 const MessagesLink: MessageType[] = [
   {
     avatar: avatar1,
-    title: "Roman Joined the Team!",
-    subtitle: "Congratulate him",
+    title: "Complete UI Design for Beinex",
+  subtitle: "Finish the UI design for Beinex."
   },
   {
     avatar: avatar2,
-    title: "New message",
-    subtitle: "Salma sent you new message",
+    title: "Review the new wireframes",
+    subtitle: "Check the wireframesmobile app"
   },
   {
     avatar: avatar3,
-    title: "Bianca sent payment",
-    subtitle: "Check your earnings",
+    title: "Develop the login screen",
+    subtitle: "Start coding the user login"
   },
   {
     avatar: avatar4,
-    title: "Jolly completed tasks",
-    subtitle: "Assign her new tasks",
+    title: "Fix the checkout bug",
+    subtitle: "Debug and fix the bug in  e-commerce"
   },
   {
     avatar: avatar5,
-    title: "John received payment",
-    subtitle: "$230 deducted from account",
-  },
+    title: "Prepare for client meeting",
+    subtitle: "Gather all project documents"
+  }
 ];
 
 
@@ -195,15 +195,13 @@ const profileDD: ProfileType[] = [
   },
   {
     img: inboxIcon,
-    title: "My Notes",
-    subtitle: "My Daily Notes",
-    url: "/apps/notes",
+    title: "Department Management",
+    url: "/apps/user-profile/followers",
   },
   {
     img: taskIcon,
-    title: "My Tasks",
-    subtitle: "To-do and Daily tasks",
-    url: "/apps/kanban",
+    title: "User Management",
+    url: "/apps/user-profile/friends",
   },
 ];
 

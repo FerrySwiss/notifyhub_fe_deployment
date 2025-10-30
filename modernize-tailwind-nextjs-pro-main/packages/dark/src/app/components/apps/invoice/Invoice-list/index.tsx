@@ -1,331 +1,124 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
-import { InvoiceContext } from "@/app/context/InvoiceContext/index";
-import {
-  Checkbox,
-  Table,
-  TextInput,
-  Button,
-  Modal,
-  Badge,
-  Tooltip,
-} from "flowbite-react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Table, Badge, Button, Spinner, Alert, Tabs, TextInput } from "flowbite-react";
+import { reminderService } from "@/app/services/api";
 import Link from "next/link";
-import { Icon } from "@iconify/react";
-import { usePathname } from "next/navigation";
-import { mutate } from "swr";
 
-function InvoiceList() {
-  const { invoices, deleteInvoice } = useContext(InvoiceContext);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("All");
-  const [selectedProducts, setSelectedProducts] = useState<any>([]);
-  const [selectAll, setSelectAll] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+interface Reminder {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
-  // Filter invoices based on search term
-  const filteredInvoices = invoices?.filter(
-    (invoice: { billFrom: string; billTo: string; status: string }) => {
-      return (
-        (invoice.billFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          invoice.billTo.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (activeTab === "All" || invoice.status === activeTab)
-      );
-    }
-  );
+const InvoiceList = () => {
+  const router = useRouter();
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
+  const [search, setSearch] = useState("");
 
-  const handleTabClick = (tabName: string) => {
-    setActiveTab(tabName);
-  };
+  useEffect(() => {
+    const fetchReminders = async () => {
+      try {
+        setLoading(true);
+        const response = await reminderService.getReminders();
+        setReminders(response.data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReminders();
+  }, []);
 
-  // Calculate the counts for different statuses
-  const Shipped = invoices?.filter(
-    (t: { status: string }) => t.status === "Shipped"
-  ).length;
-  const Delivered = invoices?.filter(
-    (t: { status: string }) => t.status === "Delivered"
-  ).length;
-  const Pending = invoices?.filter(
-    (t: { status: string }) => t.status === "Pending"
-  ).length;
+  if (loading)
+    return (
+      <div className="flex justify-center p-6">
+        <Spinner size="xl" />
+      </div>
+    );
 
-  // Toggle all checkboxes
-  const toggleSelectAll = () => {
-    const selectAllValue = !selectAll;
-    setSelectAll(selectAllValue);
-    if (selectAllValue) {
-      setSelectedProducts(invoices?.map((invoice: { id: any }) => invoice.id));
-    } else {
-      setSelectedProducts([]);
-    }
-  };
+  if (error)
+    return <Alert color="failure">Error: {error}</Alert>;
 
-  // Toggle individual product selection
-  const toggleSelectProduct = (productId: any) => {
-    const index = selectedProducts.indexOf(productId);
-    if (index === -1) {
-      setSelectedProducts([...selectedProducts, productId]);
-    } else {
-      setSelectedProducts(
-        selectedProducts.filter((id: any) => id !== productId)
-      );
-    }
-  };
-
-  // Handle opening delete confirmation dialog
-  const handleDelete = () => {
-    setOpenDeleteDialog(true);
-  };
-
-  // Handle confirming deletion of selected products
-  const handleConfirmDelete = async () => {
-    for (const productId of selectedProducts) {
-      await deleteInvoice(productId);
-    }
-    setSelectedProducts([]);
-    setSelectAll(false);
-    setOpenDeleteDialog(false);
-  };
-
-  // Handle closing delete confirmation dialog
-  const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
-  };
-
-  
-  // Reset Contacts on browser refresh
-  const location = usePathname();
-  const handleResetTickets = async () => {
-    const response = await fetch("/api/invoice" , {
-     method: 'GET',
-     headers: {
-       "broserRefreshed":"true"
-   }});
-   const result = await response.json();
-    await mutate("/api/invoice");
- }
-
- useEffect(() => {
-   const isPageRefreshed = sessionStorage.getItem("isPageRefreshed");
-   if (isPageRefreshed === "true") {
-      console.log("page refreshed");
-     sessionStorage.removeItem("isPageRefreshed");
-     handleResetTickets();
-   }
- }, [location]);
-
- useEffect(() => {
-   const handleBeforeUnload = () => {
-     sessionStorage.setItem("isPageRefreshed", "true");
-   };
-   window.addEventListener("beforeunload", handleBeforeUnload);
-   return () => {
-     window.removeEventListener("beforeunload", handleBeforeUnload);
-   };
- }, []);
+  const filteredReminders = reminders
+    .filter((r) =>
+      filter === "all" ? true : filter === "completed" ? r.completed : !r.completed
+    )
+    .filter((r) => r.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="overflow-x-auto">
-      <div className="flex justify-between overflow-x-auto gap-6 ">
-        {/* Summary sections */}
-        <div
-          className={`flex gap-3 items-center sm:w-3/12 w-full mb-2 cursor-pointer p-5 rounded-md hover:bg-lightprimary dark:hover:bg-lightprimary ${
-            activeTab == "All" ? "bg-lightprimary dark:bg-lightprimary" : null
-          }   `}
-          onClick={() => handleTabClick("All")}
-        >
-          <div className="h-14 w-14 rounded-full border-2 border-primary text-primary flex justify-center items-center">
-            <Icon icon="tabler:align-box-right-stretch" height={25} />
-          </div>
-          <div>
-            <h5 className="text-base">Total</h5>
-            <p className="text-darklink">{invoices?.length} invoices</p>
-            <h6 className="text-sm">$46,218.04</h6>
-          </div>
-        </div>
-        <div
-          className={`flex gap-3 items-center sm:w-3/12 w-full mb-2 cursor-pointer p-5 rounded-md hover:bg-lightprimary dark:hover:bg-lightprimary ${
-            activeTab == "Shipped" ? "bg-lightprimary dark:bg-lightprimary" : null
-          }`}
-          onClick={() => handleTabClick("Shipped")}
-        >
-          <div className="h-14 w-14 rounded-full border-2 border-success text-success flex justify-center items-center">
-            <Icon icon="tabler:shield" height={25} />
-          </div>
-          <div>
-            <h5 className="text-base">Shipped</h5>
-            <p className="text-darklink">{Shipped} invoices</p>
-            <h6 className="text-sm">$23,110.23</h6>
-          </div>
-        </div>
-        <div
-          className={`flex gap-3 items-center sm:w-3/12 w-full mb-2 cursor-pointer p-5 rounded-md hover:bg-lightprimary dark:hover:bg-lightprimary ${
-            activeTab == "Delivered" ? "bg-lightprimary dark:bg-lightprimary" : null
-          }`}
-          onClick={() => handleTabClick("Delivered")}
-        >
-          <div className="h-14 w-14 rounded-full border-2 border-secondary text-secondary flex justify-center items-center">
-            <Icon icon="tabler:map-pin" height={25} />
-          </div>
-          <div>
-            <h5 className="text-base">Delivered</h5>
-            <p className="text-darklink">{Delivered} invoices</p>
-            <h6 className="text-sm">$13,825.05</h6>
-          </div>
-        </div>
-        <div
-          className={`flex gap-3 items-center sm:w-3/12 w-full mb-2  cursor-pointer p-5 rounded-md hover:bg-lightprimary dark:hover:bg-lightprimary ${
-            activeTab == "Pending" ? "bg-lightprimary dark:bg-lightprimary" : null
-          }`}
-          onClick={() => handleTabClick("Pending")}
-        >
-          <div className="h-14 w-14 rounded-full border-2 border-warning text-warning flex justify-center items-center">
-            <Icon icon="tabler:camera-minus" height={25} />
-          </div>
-          <div>
-            <h5 className="text-base">Pending</h5>
-            <p className="text-darklink">{Pending} invoices</p>
-            <h6 className="text-sm">$4,655.63</h6>
-          </div>
-        </div>
-      </div>
-      <div className="sm:flex justify-between my-6">
-        <div>
-          <TextInput
-            id="dis"
-            type="text"
-            className="form-control"
-            placeholder="search"
-            value={searchTerm}
-            icon={() => <Icon icon="tabler:search" height={18} />}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <Button color={"primary"} className="sm:w-fit w-full rounded-md sm:mt-0 mt-4">
-          <Link href="/apps/invoice/create">New Invoice</Link>
-        </Button>
+    <div className="p-6">
+      <h2 className="text-2xl font-semibold mb-6">Reminders</h2>
+
+      <Tabs
+        aria-label="Reminder tabs"
+        variant="underline"
+        onActiveTabChange={(index) => {
+          if (index === 0) setFilter("all");
+          if (index === 1) setFilter("pending");
+          if (index === 2) setFilter("completed");
+        }}
+      >
+        <Tabs.Item title="All" />
+        <Tabs.Item title="Pending" />
+        <Tabs.Item title="Completed" />
+      </Tabs>
+
+      <div className="mt-4 flex justify-between items-center">
+        <TextInput
+          placeholder="Search reminders..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Link href="/apps/invoice/create">
+          <Button color="primary">+ New Reminder</Button>
+        </Link>
       </div>
 
-      <div className="overflow-x-auto">
-        <Table hoverable>
+      {filteredReminders.length === 0 ? (
+        <p className="text-gray-500 mt-6">No reminders found.</p>
+      ) : (
+        <Table className="mt-6">
           <Table.Head>
-            <Table.HeadCell className="p-4">
-              <Checkbox
-                className="checkbox"
-                checked={selectAll}
-                onChange={toggleSelectAll}
-              />
-            </Table.HeadCell>
-            <Table.HeadCell>ID</Table.HeadCell>
-            <Table.HeadCell>BILL FROM</Table.HeadCell>
-            <Table.HeadCell>BILL TO</Table.HeadCell>
-            <Table.HeadCell>TOTAL COST</Table.HeadCell>
-            <Table.HeadCell>STATUS</Table.HeadCell>
-            <Table.HeadCell className="text-center">ACTION</Table.HeadCell>
+            <Table.HeadCell>Title</Table.HeadCell>
+            <Table.HeadCell>Description</Table.HeadCell>
+            <Table.HeadCell>Sender Email</Table.HeadCell>
+            <Table.HeadCell>Sender Name</Table.HeadCell>
+            <Table.HeadCell>Receiver Email</Table.HeadCell>
+            <Table.HeadCell>Interval Type</Table.HeadCell>
+            <Table.HeadCell>Start Date</Table.HeadCell>
+            <Table.HeadCell>End Date</Table.HeadCell>
+            <Table.HeadCell>Status</Table.HeadCell>
           </Table.Head>
-          <Table.Body className="divide-y divide-border dark:divide-darkborder">
-            {filteredInvoices?.map(
-              (invoice: {
-                id: any;
-                billFrom: any;
-                billTo: any;
-                totalCost: any; 
-                status: any;
-              }) => (
-                <Table.Row key={invoice.id}>
-                  <Table.Cell className="p-4">
-                    <Checkbox
-                      className="checkbox"
-                      onChange={() => toggleSelectProduct(invoice.id)}
-                      checked={selectedProducts.includes(invoice.id)}
-                    />
-                  </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap">
-                    <h5 className="text-sm">{invoice.id}</h5>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <h5 className="text-sm">{invoice.billFrom}</h5>
-                  </Table.Cell>
-                  <Table.Cell className="text-ld">{invoice.billTo}</Table.Cell>
-                  <Table.Cell className="text-ld">
-                    {invoice.totalCost}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {invoice.status === "Shipped" ? (
-                      <Badge color="success" className="rounded-md">{invoice.status}</Badge>
-                    ) : invoice.status === "Delivered" ? (
-                      <Badge color="secondary" className="rounded-md">{invoice.status}</Badge>
-                    ) : invoice.status === "Pending" ? (
-                      <Badge color="warning" className="rounded-md">{invoice.status}</Badge>
-                    ) : (
-                      ""
-                    )}
-                  </Table.Cell>
-                  <Table.Cell className="text-center">
-                    <div className="flex justify-center gap-3">
-                      <Tooltip content="Edit Invoice" placement="bottom">
-                        <Button className="btn-circle p-0 mb-2 bg-lightsuccess  text-success hover:bg-success hover:text-white">
-                          <Link href={`/apps/invoice/edit/${invoice.billFrom}`}>
-                            <Icon icon="tabler:pencil" height={18} />
-                          </Link>
-                        </Button>
-                      </Tooltip>
-                      <Tooltip content="View Invoice" placement="bottom">
-                        <Button
-                          color={"lightprimary"}
-                          className="btn-circle p-0 mb-2"
-                        >
-                          <Link
-                            href={`/apps/invoice/detail/${invoice.billFrom}`}
-                          >
-                            <Icon icon="tabler:eye" height={18} />
-                          </Link>
-                        </Button>
-                      </Tooltip>
-                      <Tooltip content="Delete Invoice" placement="bottom">
-                        <Button
-                          color={"lighterror"}
-                          className="btn-circle p-0 mb-2"
-                          onClick={() => {
-                            setSelectedProducts([invoice.id]);
-                            handleDelete();
-                          }}
-                        >
-                          <Icon
-                            icon="tabler:trash"
-                            height={18}
-                          />
-                        </Button>
-                      </Tooltip>
-                    </div>
-                  </Table.Cell>
-                </Table.Row>
-              )
-            )}
+          <Table.Body className="divide-y">
+            {filteredReminders.map((reminder) => (
+              <Table.Row key={reminder.id}>
+                <Table.Cell>{reminder.title}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>{"-"}</Table.Cell>
+                <Table.Cell>
+                  {reminder.completed ? (
+                    <Badge color="success">Completed</Badge>
+                  ) : (
+                    <Badge color="warning">Pending</Badge>
+                  )}
+                </Table.Cell>
+              </Table.Row>
+            ))}
           </Table.Body>
         </Table>
-      </div>
-      <Modal
-        show={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        size={"md"}
-      >
-        <Modal.Body>
-          <p className="text-center text-lg text-ld">
-            Are you sure you want to delete selected products?
-          </p>
-        </Modal.Body>
-        <Modal.Footer className="mx-auto">
-          <Button color="lighterror" onClick={handleCloseDeleteDialog}>
-            Cancel
-          </Button>
-          <Button color="error" onClick={handleConfirmDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      )}
     </div>
   );
-}
+};
 
 export default InvoiceList;

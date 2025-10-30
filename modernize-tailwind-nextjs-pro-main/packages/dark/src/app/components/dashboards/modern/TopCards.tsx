@@ -18,7 +18,7 @@ const TopCards = () => {
     const TopCardInfo = [
         {
             key:"card1",
-            title:"Reports",
+            title:"Daily Alerts",
             desc:"59",
             img:iconConnect,
             bgcolor:"bg-lightprimary dark:bg-lightprimary ",
@@ -26,7 +26,7 @@ const TopCards = () => {
         },
         {
             key:"card2",
-            title:"Payroll",
+            title:"Weekly Alerts",
             desc:"$96k",
             img:iconSpeechBubble,
             bgcolor:"bg-lightsuccess dark:bg-lightsuccess",
@@ -34,15 +34,15 @@ const TopCards = () => {
         },
         {
             key:"card3",
-            title:"Events",
+            title:"Monthly Updates",
             desc:"696",
             img:iconFavorites,
-            bgcolor:"bg-lighterror dark:bg-lighterror",
+            bgcolor:"Ongoing",
             textclr:"text-error dark:text-error"
         },
         {
             key:"card4",
-            title:"Projects",
+            title:"OnGoing",
             desc:"356",
             img:iconMailbox,
             bgcolor:"bg-lightinfo dark:bg-darkinfo",
@@ -50,7 +50,7 @@ const TopCards = () => {
         },
         {
             key:"card5",
-            title:"Clients",
+            title:"Completed",
             desc:"3,560",
             img:iconBriefcase,
             bgcolor:"bg-lightwarning dark:bg-lightwarning",
@@ -59,20 +59,13 @@ const TopCards = () => {
         },
         {
             key:"card7",
-            title:"Employees",
+            title:"Upcoming",
             desc:"96",
             img:iconUser,
             bgcolor:"bg-lightprimary dark:bg-lightprimary",
             textclr:"text-primary dark:text-primary"
         },
-        {
-            key:"card8",
-            title:"Events",
-            desc:"696",
-            img:iconFavorites,
-            bgcolor:"bg-lighterror dark:bg-lighterror",
-            textclr:"text-error dark:text-error"
-        },
+       
     ]
 
 

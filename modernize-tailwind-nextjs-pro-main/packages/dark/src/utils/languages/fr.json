@@ -167,5 +167,12 @@
   "Blog": "Blogue",
   "Blog Details": "Détails du blog",
   "Contact Us": "Contactez-nous",
-  "Portfolio": "Portefeuille"
+  "Portfolio": "Portefeuille",
+
+  "Dashboard": "Tableau de bord",
+  "Recent Reminders": "Rappels récents",
+  "Reminder List": "Liste de rappels",
+  "Account Settings": "Paramètres du compte",
+  "Department": "Département",
+  "Users": "Utilisateurs"
 }
