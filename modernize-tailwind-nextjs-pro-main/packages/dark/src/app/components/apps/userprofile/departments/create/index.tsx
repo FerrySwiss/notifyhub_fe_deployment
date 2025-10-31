@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import { useRouter } from "next/navigation";
 import { Button, TextInput, Card, Label, Textarea } from "flowbite-react";
 import { departmentService } from "@/app/services/api";
@@ -13,6 +13,7 @@ const CreateDepartmentApp = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

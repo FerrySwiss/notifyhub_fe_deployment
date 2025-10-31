@@ -1,12 +1,14 @@
 import React from 'react'
 import CardBox from "@/app/components/shared/CardBox";
 import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/BreadcrumbComp";
-import { InvoiceProvider } from '@/app/context/InvoiceContext/index';
+import { InvoiceProvider } from '@/app/context/InvoiceContext';
 import InvoiceDetail from '@/app/components/apps/invoice/Invoice-detail/index'
 import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "Invoice Details App ",
+  title: "Invoice Details",
 };
+
 const BCrumb = [
     {
         to: "/",
@@ -28,6 +30,3 @@ function InvoiceDetailPage() {
     )
 }
 export default InvoiceDetailPage;
-
-
-

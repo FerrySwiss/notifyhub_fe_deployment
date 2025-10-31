@@ -64,7 +64,7 @@ const SidebarContent: MenuItem[] = [
       {
         name: "Account Settings",
         id: uniqueId(),
-        icon: "tabler:user-circle",
+        icon: "tabler:settings",
         children: [
           {
             id: uniqueId(),

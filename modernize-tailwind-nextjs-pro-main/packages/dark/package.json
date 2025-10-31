@@ -16,6 +16,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@headlessui/react": "^2.1.2",
     "@hello-pangea/dnd": "^17.0.0",
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.10.0",
     "@iconify/react": "4.1.1",
     "@radix-ui/react-accordion": "^1.2.2",

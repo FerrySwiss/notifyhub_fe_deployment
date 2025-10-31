@@ -1,30 +1,32 @@
 import React from 'react'
 import CardBox from "@/app/components/shared/CardBox";
 import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/BreadcrumbComp";
-import EditInvoicePage from '@/app/components/apps/invoice/Edit-invoice/index';
-import { InvoiceProvider } from '@/app/context/InvoiceContext/index';
+import EditReminderPage from '@/app/components/apps/invoice/Edit-invoice/index';
 import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "Invoice Edit App",
+  title: "Edit Reminder",
 };
+
 const BCrumb = [
     {
         to: "/",
         title: "Home",
     },
     {
-        title: "Invoice Edit",
+        title: "Edit Reminder",
     },
 ];
-function EditPage() {
+
+function Page({ params }: { params: { slug: string } }) {
     return (
-        <InvoiceProvider>
-            <BreadcrumbComp title="Invoice Edit" items={BCrumb} />
+        <>
+            <BreadcrumbComp title="Edit Reminder" items={BCrumb} />
             <CardBox>
-                <EditInvoicePage />
+                <EditReminderPage reminderId={params.slug} />
             </CardBox>
-        </InvoiceProvider>
+        </>
     )
 }
 
-export default EditPage;
+export default Page;
