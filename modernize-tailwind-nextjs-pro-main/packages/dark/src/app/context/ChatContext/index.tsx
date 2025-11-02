@@ -6,7 +6,7 @@ import { ChatsType, MessageType } from '@/app/(DashboardLayout)/types/apps/chat'
 import { getFetcher, postFetcher } from '@/app/api/globalFetcher';
 
 
-// Define context props interface
+
 export interface ChatContextProps {
     chatData: ChatsType[];
     chatContent: any[];
@@ -24,7 +24,7 @@ export interface ChatContextProps {
     setError: Dispatch<SetStateAction<string>>;
 }
 
-// Create the context
+
 export const ChatContext = createContext<ChatContextProps>({
     chatData: [],
     chatContent: [],
@@ -42,7 +42,7 @@ export const ChatContext = createContext<ChatContextProps>({
     setError: () => { },
 });
 
-// Create the provider component
+
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [chatData, setChatData] = useState<ChatsType[]>([]);
     const [chatContent, setChatContent] = useState<any[]>([]);
@@ -54,7 +54,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const {data:ChatsData,isLoading:isChatsLoading,error:Chatserror,mutate} = useSWR('/api/chat', getFetcher);
 
-    // Fetch chat data from the API
+    
     useEffect(() => {
         if(ChatsData){
             setLoading(isChatsLoading);
@@ -74,7 +74,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, [ChatsData,Chatserror]);
 
-    // Function to send a message to a chat identified by `chatId` using an API call.
 
     const sendMessage = async (chatId: number | string, message: MessageType) => {
         try {

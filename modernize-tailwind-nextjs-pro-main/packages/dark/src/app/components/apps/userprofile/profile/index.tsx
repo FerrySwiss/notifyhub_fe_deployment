@@ -1,167 +1,158 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { Label, TextInput, Textarea, Button } from "flowbite-react";
+import { Pencil, Check } from "lucide-react";
 import ProfileBanner from "./ProfileBanner";
 import CardBox from "@/app/components/shared/CardBox";
-import { Label, TextInput, Textarea } from 'flowbite-react';
+import { UserDataContext } from "@/app/context/UserDataContext/index"; // Import global UserDataContext
 
-import { Button } from 'flowbite-react'; 
-// Create the context for user data
-const UserDataContext = createContext(null);
-
-// This provider component will manage the user's state
-const UserDataProvider = ({ children }) => {
-  // Use a mock user data state for demonstration
-  const [userData, setUserData] = useState({
-    name: "Jane Doe",
-    bio: "Passionate developer and lifelong learner.",
-    department: "Engineering"
+const ProfileSection = () => {
+  const { user, loading, error } = useContext(UserDataContext); // Consume global user
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.username || "", // Use user data
+    bio: "", // Bio is not in the current user object, so default to empty
+    department: user?.company?.name || "", // Use company name as department
   });
-
-  // The value provided to the consumers of this context
-  const value = {
-    userData,
-    setUserData,
-  };
-
-  return (
-    <UserDataContext.Provider value={value}>
-      {children}
-    </UserDataContext.Provider>
-  );
-};
-
-// A mock component to display an introduction
-const Introduction = () => {
-  const { userData } = useContext(UserDataContext);
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-xl font-bold mb-4">Introduction</h2>
-      <p className="text-gray-700">{userData.bio}</p>
-    </div>
-  );
-};
-
-// A mock component for the profile banner
-<ProfileBanner/>
-
-
-
-
-// The new profile form component
-const ProfileForm = () => {
-  // Get the userData and the setter function from context
-  const { userData, setUserData } = useContext(UserDataContext);
-
-  // Use local state to manage the form inputs
-  const [formData, setFormData] = useState(userData);
   const [isSaved, setIsSaved] = useState(false);
 
-  // Update local form state when context data changes (e.g., initial load)
   useEffect(() => {
-    setFormData(userData);
-  }, [userData]);
+    if (user) {
+      setFormData({
+        name: user.username || "",
+        bio: "",
+        department: user.company?.name || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-    setIsSaved(false); // Reset saved status on change
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setIsSaved(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSave = (e) => {
     e.preventDefault();
-    // Save the data to the context
-    setUserData(formData);
+    // In a real application, you would call an API to update the user data
+    // For now, we just update the local state (which is not persisted)
+    // setUserData(formData); // This would update the global context if it were mutable
+    setIsEditing(false);
     setIsSaved(true);
   };
 
-  return (
-    <div>
-      <CardBox>
-        <div className="flex justify-between">
-          <h4 className="text-lg font-semibold mb-4">Edit Profile</h4>
-          {/* Assuming a component like RoundInputsCodes exists to show the code */}
-          {/* <RoundInputsCodes /> */} 
-        </div>
+  if (loading) return <div>Loading user profile...</div>;
+  if (error) return <div>Error loading user profile: {error.message}</div>;
+  if (!user) return <div>No user data available.</div>;
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+  return (
+    <CardBox className="bg-gray-800 text-gray-200 rounded-xl p-6 shadow-md border border-gray-700">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="text-lg font-semibold text-white">Profile Details</h4>
+        {!isEditing ? (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition"
+          >
+            <Pencil size={18} /> Edit
+          </button>
+        ) : (
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-2 text-green-400 hover:text-green-300 transition"
+          >
+            <Check size={18} /> Save
+          </button>
+        )}
+      </div>
+
+      {/* View Mode */}
+      {!isEditing && (
+        <div className="space-y-3">
+          <p>
+            <span className="text-gray-400 font-medium">Name:</span>{" "}
+            <span className="text-gray-100">{user.username}</span> {/* Use user.username */}
+          </p>
+          <p>
+            <span className="text-gray-400 font-medium">Department:</span>{" "}
+            <span className="text-gray-100">{user.company?.name}</span> {/* Use user.company.name */}
+          </p>
+          <p>
+            <span className="text-gray-400 font-medium">Email:</span>{" "}
+            <span className="text-gray-100">{user.email}</span> {/* Add email */}
+          </p>
+          <p>
+            <span className="text-gray-400 font-medium">Bio:</span>{" "}
+            <span className="text-gray-100">{formData.bio}</span>
+          </p>
+          {isSaved && (
+            <p className="text-green-400 text-sm font-semibold">Saved!</p>
+          )}
+        </div>
+      )}
+
+      {/* Edit Mode */}
+      {isEditing && (
+        <form onSubmit={handleSave} className="flex flex-col gap-4 mt-4">
           <div>
-            <div className="mb-2 block">
-              <Label htmlFor="name" value="Name" />
-            </div>
+            <Label htmlFor="name" value="Name" className="text-gray-300" />
             <TextInput
               id="name"
-              type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-100"
               required
-              className="form-control-rounded"
             />
           </div>
           <div>
-            <div className="mb-2 block">
-              <Label htmlFor="department" value="Department" />
-            </div>
+            <Label
+              htmlFor="department"
+              value="Department"
+              className="text-gray-300"
+            />
             <TextInput
               id="department"
-              type="text"
               name="department"
               value={formData.department}
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-100"
               required
-              className="form-control-rounded"
             />
           </div>
           <div>
-  <div className="mb-2 block">
-    <Label htmlFor="bio" value="Bio" />
-  </div>
-  <Textarea
-    id="bio"
-    name="bio"
-    rows={4}
-    value={formData.bio}
-    onChange={handleChange}
-    required
-    className="form-control-rounded"
-  />
-</div>
-          <div className="flex items-center justify-between">
-            <Button type="submit" color="primary" className="rounded-xl">
-              Save Profile
-            </Button>
-            {isSaved && (
-              <span className="text-green-500 text-sm font-semibold">Saved!</span>
-            )}
+            <Label htmlFor="bio" value="Bio" className="text-gray-300" />
+            <Textarea
+              id="bio"
+              name="bio"
+              rows={4}
+              value={formData.bio}
+              onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-100"
+              required
+            />
           </div>
         </form>
-      </CardBox>
-    </div>
+      )}
+    </CardBox>
   );
 };
 
-
 const UserProfileApp = () => {
   return (
-    <>
-      <UserDataProvider>
-        <div className="grid grid-cols-12 gap-6">
-          {/* Banner */}
-          <div className="col-span-12">
-            <ProfileBanner />
-          </div>
-          <div className=" col-span-12">
-            <div className="grid grid-cols-12">
-              <div className="col-span-12 mb-30">
-                <ProfileForm />
-              </div>
-            
-            </div>
-          </div>
-         
-        </div>
-      </UserDataProvider>
-    </>
+    // UserDataProvider is now provided at a higher level (e.g., layout.tsx)
+    // so we just render the content directly.
+    <div className="grid grid-cols-12 gap-6">
+      {/* Banner */}
+      <div className="col-span-12">
+        <ProfileBanner />
+      </div>
+
+      {/* Profile Section */}
+      <div className="col-span-12">
+        <ProfileSection />
+      </div>
+    </div>
   );
 };
 

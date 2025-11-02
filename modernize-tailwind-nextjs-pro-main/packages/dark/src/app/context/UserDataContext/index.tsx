@@ -3,19 +3,18 @@ import React, { createContext, useState, useEffect } from 'react';
 import { PostType, profiledataType } from '@/app/(DashboardLayout)/types/apps/userProfile';
 import { userService, departmentService } from '@/app/services/api';
 
-// Define context type
 export type UserDataContextType = {
     posts: PostType[];
-    users: any[];
+    user: any; // Changed from users: any[]
     gallery: any[];
-    followers: any[];
+    // followers: any[]; // Removed
     departments: any[];
     profileData: profiledataType;
     loading: boolean;
     error: null | any;
-    followerSearch: string;
+    // followerSearch: string; // Removed
     departmentSearch: string;
-    setFollowerSearch: React.Dispatch<React.SetStateAction<string>>;
+    // setFollowerSearch: React.Dispatch<React.SetStateAction<string>>; // Removed
     setDepartmentSearch: React.Dispatch<React.SetStateAction<string>>;
     addGalleryItem: (item: any) => void;
     addReply: (postId: number, commentId: number, reply: string) => void;
@@ -26,15 +25,13 @@ export type UserDataContextType = {
     toggleDepartmentStatus: (id: number) => void;
 };
 
-// Create context
 export const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
 
-// Default config values
 const config = {
-    posts: [],
-    users: [],
+    posts: [], 
+    users: [], // Still here for config, but not used for state
     gallery: [],
-    followers: [],
+    followers: [], // Still here for config, but not used for state
     departments: [],
     followerSearch: '',
     departmentSearch: '',
@@ -43,11 +40,11 @@ const config = {
 
 export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [posts, setPosts] = useState<PostType[]>(config.posts);
-    const [users, setUsers] = useState<any[]>(config.users);
+    const [user, setUser] = useState<any>(null); // Changed from users
     const [gallery, setGallery] = useState<any[]>(config.gallery);
-    const [followers, setFollowers] = useState<any[]>(config.followers);
+    // const [followers, setFollowers] = useState<any[]>(config.followers); // Removed
     const [departments, setDepartments] = useState<any[]>(config.departments);
-    const [followerSearch, setFollowerSearch] = useState<string>(config.followerSearch);
+    // const [followerSearch, setFollowerSearch] = useState<string>(config.followerSearch); // Removed
     const [departmentSearch, setDepartmentSearch] = useState<string>(config.departmentSearch);
     const [error, setError] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(config.loading);
@@ -65,12 +62,12 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoading(true);
-                const usersResponse = await userService.getUsers();
+                setLoading(true)
+                const userResponse = await userService.getMe(); // Changed from usersResponse
                 const deptsResponse = await departmentService.getDepartments();
-                setUsers(usersResponse.data);
-                setFollowers(usersResponse.data);
-                setDepartments(deptsResponse.data);
+                setUser(userResponse); // Changed from setUsers(usersResponse.data)
+                // setFollowers(usersResponse.data); // Removed
+                setDepartments(deptsResponse);
             } catch (err) {
                 setError(err);
             } finally {
@@ -80,23 +77,22 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         fetchData();
     }, []);
 
-    // Function to filter followers based on search input
-    const filterFollowers = () => {
-        if (followers) {
-            return followers.filter((t) =>
-                t.name.toLowerCase().includes(followerSearch.toLowerCase())
-            );
-        }
-        return followers;
-    };
     
-    // Function to filter departments based on search input
+    // const filterFollowers = () => { // Removed
+    //     if (followers) {
+    //         return followers.filter((t) =>
+    //             t.name.toLowerCase().includes(followerSearch.toLowerCase())
+    //         );
+    //     }
+    //     return followers;
+    // };
+    
    
 const filterDepartments = () => {
     if (departments && departmentSearch) {
         return departments.filter((t) =>
-            (typeof t.title === 'string' && t.title.toLowerCase().includes(departmentSearch.toLowerCase())) 
-        );
+            (typeof t.name === 'string' && t.name.toLowerCase().includes(departmentSearch.toLowerCase())) 
+        ); // Changed t.title to t.name
     }
     return departments;
 };
@@ -105,9 +101,9 @@ const filterDepartments = () => {
         <UserDataContext.Provider
             value={{
                 posts,
-                users,
+                user,
                 gallery,
-                followers: filterFollowers(),
+                followers: [], // Provided an empty array for followers
                 departments: filterDepartments(),
                 profileData,
                 loading,
@@ -119,8 +115,8 @@ const filterDepartments = () => {
                 likeReply: () => {},
                 toggleFollow: () => {},
                 toggleDepartmentStatus: () => {},
-                setFollowerSearch,
-                followerSearch,
+                // setFollowerSearch, // Removed
+                // followerSearch, // Removed
                 setDepartmentSearch,
                 departmentSearch,
             }}
@@ -128,4 +124,4 @@ const filterDepartments = () => {
             {children}
         </UserDataContext.Provider>
     );
-};
+}; 

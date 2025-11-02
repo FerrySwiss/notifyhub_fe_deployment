@@ -1,18 +1,24 @@
 import { client } from '@/app/libs/apollo-client';
 import { gql } from '@apollo/client';
+import { Reminder, UpdateReminderInput } from "@/app/(DashboardLayout)/types/apps/reminder";
 
 export const userService = {
-  async getUsers(page = 1, limit = 10) {
+  async getMe() {
     const query = gql`
-      query ListUsers($page: Int!, $limit: Int!) {
-        users(options: { paginate: { page: $page, limit: $limit } }) {
-          data { id name email username }
-          meta { totalCount }
+      query Me {
+        me {
+          id
+          username
+          email
+          company {
+            id
+            name
+          }
         }
       }
     `;
-    const result = await client.query({ query, variables: { page, limit } });
-    return result.data.users;
+    const result = await client.query({ query });
+    return result.data.me;
   },
 
   async createUser(userData: { name: string; username: string; email: string }) {
@@ -39,17 +45,21 @@ export const userService = {
 };
 
 export const departmentService = {
-  async getDepartments(page = 1, limit = 10) {
+  async getDepartments() {
     const query = gql`
-      query ListDepartments($page: Int!, $limit: Int!) {
-        posts(options: { paginate: { page: $page, limit: $limit } }) {
-          data { id title body user { id name } }
-          meta { totalCount }
+      query Departments {
+        departments {
+          id
+          name
+          company {
+            id
+            name
+          }
         }
       }
     `;
-    const result = await client.query({ query, variables: { page, limit } });
-    return result.data.posts;
+    const result = await client.query({ query });
+    return result.data.departments;
   },
 
   async createDepartment(deptData: { userId: string; title: string; body: string }) {
@@ -79,24 +89,88 @@ export const departmentService = {
 };
 
 export const reminderService = {
-  async getReminders(page = 1, limit = 20) {
+  async getReminders(active?: boolean) {
     const query = gql`
-      query ListReminders($page: Int!, $limit: Int!) {
-        todos(options: { paginate: { page: $page, limit: $limit } }) {
-          data { id title completed user { id name email } }
-          meta { totalCount }
+      query Reminders($active: Boolean) {
+        reminders(active: $active) {
+          id
+          title
+          description
+          reminderStartDate
+          reminderEndDate
+          active
         }
       }
     `;
-    const result = await client.query({ query, variables: { page, limit } });
-    return result.data.todos;
+    const result = await client.query({ query, variables: { active } });
+    return result.data.reminders;
   },
 
-  async createReminder(reminderData: { title: string; completed: boolean; userId: string }) {
+  async getReminderById(id: string): Promise<Reminder> {
+    const query = gql`
+      query Reminder($id: ID!) {
+        reminder(id: $id) {
+          id
+          title
+          description
+          senderEmail
+          receiverEmail
+          intervalType
+          reminderStartDate
+          reminderEndDate
+          active
+        }
+      }
+    `;
+    const result = await client.query({ query, variables: { id } });
+    const reminder = result.data.reminder;
+
+    if (!reminder) {
+      throw new Error(`Reminder with ID ${id} not found.`);
+    }
+
+    return reminder;
+  },
+
+  async createReminder(reminderData: {
+    title: string;
+    description?: string;
+    senderEmail: string;
+    senderName?: string;
+    receiverEmail: string;
+    intervalType?: string;
+    reminderStartDate?: string;
+    reminderEndDate?: string;
+    phoneNo?: string;
+    active?: boolean;
+  }) {
     const mutation = gql`
-      mutation CreateReminder($title: String!, $completed: Boolean!, $userId: ID!) {
-        createTodo(input: { title: $title, completed: $completed, userId: $userId }) {
-          id title completed user { id name }
+      mutation CreateReminder(
+        $title: String!
+        $description: String
+        $senderEmail: String!
+        $senderName: String
+        $receiverEmail: String!
+        $intervalType: String
+        $reminderStartDate: DateTime
+        $reminderEndDate: DateTime
+        $phoneNo: String
+        $active: Boolean
+      ) {
+        createReminder(
+          title: $title
+          description: $description
+          senderEmail: $senderEmail
+          senderName: $senderName
+          receiverEmail: $receiverEmail
+          intervalType: $intervalType
+          reminderStartDate: $reminderStartDate
+          reminderEndDate: $reminderEndDate
+          phoneNo: $phoneNo
+          active: $active
+        ) {
+          ok
+          reminder { id title active }
         }
       }
     `;
@@ -104,10 +178,60 @@ export const reminderService = {
       mutation, 
       variables: {
         title: reminderData.title,
-        completed: false,
-        userId: reminderData.userId || "1"
+        description: reminderData.description,
+        senderEmail: reminderData.senderEmail,
+        senderName: reminderData.senderName,
+        receiverEmail: reminderData.receiverEmail,
+        intervalType: reminderData.intervalType,
+        reminderStartDate: reminderData.reminderStartDate,
+        reminderEndDate: reminderData.reminderEndDate,
+        phoneNo: reminderData.phoneNo,
+        active: reminderData.active,
       }
     });
-    return result.data.createTodo;
-  }
+    return result.data.createReminder.reminder;
+  },
+
+  async updateReminder(input: UpdateReminderInput): Promise<Reminder> {
+    const mutation = gql`
+      mutation UpdateReminder(
+        $id: ID!
+        $title: String
+        $description: String
+        $senderEmail: String
+        $senderName: String
+        $receiverEmail: String
+        $intervalType: String
+        $reminderStartDate: DateTime
+        $reminderEndDate: DateTime
+        $phoneNo: String
+        $active: Boolean
+        $send: Boolean
+        $completed: Boolean
+      ) {
+        updateReminder(
+          id: $id
+          title: $title
+          description: $description
+          senderEmail: $senderEmail
+          senderName: $senderName
+          receiverEmail: $receiverEmail
+          intervalType: $intervalType
+          reminderStartDate: $reminderStartDate
+          reminderEndDate: $reminderEndDate
+          phoneNo: $phoneNo
+          active: $active
+          send: $send
+          completed: $completed
+        ) {
+          ok
+          reminder { id title active }
+        }
+      }
+    `;
+    const variables: any = { ...input };
+    const result = await client.mutate({ mutation, variables });
+    const reminder = result.data.updateReminder.reminder;
+    return reminder;
+  },
 };

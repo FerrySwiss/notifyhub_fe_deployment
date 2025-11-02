@@ -1,74 +1,30 @@
-// SWR fetcher function
+const getFetcher = (url: string) => fetch(url).then(res => res.json());
 
-const getFetcher = (url:any) => fetch(url,{
-    method:"GET",
-    headers:{'browserrefreshed':'false'},
-}).then((res) => {
-    if(!res.ok){
-        throw new Error("Failed to fetch the data")
-    }
-    return res.json()
-});
-
-
-const postFetcher = (url:string,arg:any) => fetch(url,{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(arg)
-}).then((res) => {
-    if(!res.ok){
-        throw new Error("Failed to post data")
-    }
-    return res.json()
-});
-
-const putFetcher = (url:string,arg:any) => fetch(url,{
-    method:"PUT",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(arg)
-}).then((res) => {
-    if(!res.ok){
-        throw new Error("Failed to updated data")
-    }
-    return res.json()
-});
-
-const patchFetcher = (url:string,arg:any) => fetch(url,{
-    method:"PATCH",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(arg)
-}).then((res) => {
-    if(!res.ok){
-        throw new Error("Failed to updated data")
-    }
-    return res.json()
-});
-
-const deleteFetcher = (url:string , arg:any) => fetch(url,{
-    method:"DELETE",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(arg)
-}).then((res) => {
-    if(!res.ok){
-        throw new Error("Failed to delete data")
-    }
-    return res.json()
-})
-
-const graphqlFetcher = (key: [string, any]) => {
-  const [query, variables] = key;
-  return fetch("https://graphqlzero.almansi.me/api", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query, variables }),
-  }).then((res) => {
-    if (!res.ok) {
-      throw new Error("Failed to fetch the data");
-    }
+const postFetcher = async (url: string, body: any) => {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
     return res.json();
-  });
 };
 
-export {getFetcher,postFetcher,putFetcher,deleteFetcher, patchFetcher, graphqlFetcher}
+const putFetcher = async (url: string, body: any) => {
+    const res = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    return res.json();
+};
+
+const deleteFetcher = async (url: string, body: any) => {
+    const res = await fetch(url, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    return res.json();
+};
+
+export { getFetcher, postFetcher, putFetcher, deleteFetcher };

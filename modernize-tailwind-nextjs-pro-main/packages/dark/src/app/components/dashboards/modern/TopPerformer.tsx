@@ -142,7 +142,7 @@ export const TopPerformer = () => {
                 </div>
                 <div className="sm:mt-0 mt-4">
                     <Link href="/apps/invoice/list">
-                        <Button color="blue" size="sm" className="flex items-center justify-center rounded-md gap-3 !text-sm text-start leading-[normal] font-normal text-link dark:text-darklink dark:hover:text-primary !text-white bg-primary mb-0.5 hover:bg-primary hover:text-white">
+                        <Button color="blue" size="sm" className="flex items-center justify-center rounded-md gap-3 !text-sm text-start leading-[normal] font-normal text-link dark:text-darklink dark:hover:text-primary !text-white  hover:text-white bg-primary mb-0.5 hover:bg-primary hover:text-whit">
                             View All
                         </Button>
                     </Link>

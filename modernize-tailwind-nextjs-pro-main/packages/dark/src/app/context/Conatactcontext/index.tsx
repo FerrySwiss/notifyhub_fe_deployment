@@ -4,7 +4,7 @@ import { ContactType } from '../../(DashboardLayout)/types/apps/contact'
 import useSWR from 'swr';
 import { deleteFetcher, getFetcher, postFetcher, putFetcher } from '@/app/api/globalFetcher';
 
-// Define the shape of the context
+
 export interface ContactContextType {
   selectedDepartment: string;
   setSelectedDepartment: React.Dispatch<React.SetStateAction<string>>;
@@ -40,7 +40,7 @@ export const ContactContextProvider: React.FC<{ children: ReactNode }> = ({ chil
 
 
 
-  // Fetch contacts data from the API on component mount
+  
   const {data:contactsData,isLoading:isContactsLoading,error:contactsError,mutate} = useSWR('/api/contacts',getFetcher);
 
   useEffect(() => {
@@ -67,7 +67,6 @@ export const ContactContextProvider: React.FC<{ children: ReactNode }> = ({ chil
     setSearchTerm(term);
   };
 
-  // Function to add Contact
   const addContact = async (newContact: ContactType) => {
     try{
       await mutate(postFetcher("/api/contacts",newContact));
@@ -77,7 +76,7 @@ export const ContactContextProvider: React.FC<{ children: ReactNode }> = ({ chil
  };
 
 
-  // Function to delete a contact
+  
   const deleteContact = async (contactId: string | number) => {
     try {
        await mutate(deleteFetcher("/api/contacts",{ data: { contactId } }));
@@ -88,7 +87,7 @@ export const ContactContextProvider: React.FC<{ children: ReactNode }> = ({ chil
       console.error('Failed to delete contact:', error);
     }
   };
-  // Function to update a contact
+
   const updateContact = async (updatedContact: React.SetStateAction<ContactType | null>) => {
     try {
        await mutate(putFetcher("/api/contacts",updatedContact));
@@ -97,12 +96,12 @@ export const ContactContextProvider: React.FC<{ children: ReactNode }> = ({ chil
       console.error('Failed to update contact:', error);
     }
   };
-  // Function to select a contact
+  
   const selectContact = (contact: ContactType) => {
     setSelectedContact(contact);
   };
 
-  // Function to toggle the starred status of a contact
+  
   const toggleStarred = (contactId: number) => {
     if (starredContacts.includes(contactId)) {
       setStarredContacts(prevStarred => prevStarred.filter(id => id !== contactId));
@@ -111,7 +110,7 @@ export const ContactContextProvider: React.FC<{ children: ReactNode }> = ({ chil
     }
   };
 
-  // Value provided by the context provider
+
   const contextValue: ContactContextType = {
     selectedDepartment,
     setSelectedDepartment,

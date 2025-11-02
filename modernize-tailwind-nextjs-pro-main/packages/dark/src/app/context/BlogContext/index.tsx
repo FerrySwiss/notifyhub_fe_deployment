@@ -4,7 +4,7 @@ import { BlogType, BlogPostType } from '../../(DashboardLayout)/types/apps/blog'
 import { getFetcher } from '@/app/api/globalFetcher';
 import useSWR from 'swr'
 
-// Define BlogContextProps interface
+
 export interface BlogContextProps {
     posts: BlogPostType[];
     sortBy: string;
@@ -19,7 +19,6 @@ export interface BlogContextProps {
     error:null
 }
 
-// Create context with default values
 export const BlogContext = createContext<BlogContextProps>({
     posts: [],
     sortBy: 'newest',
@@ -34,7 +33,6 @@ export const BlogContext = createContext<BlogContextProps>({
     error:null
 });
 
-// BlogProvider component
 export const BlogProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [posts, setPosts] = useState<BlogPostType[]>([]);
     const [sortBy, setSortBy] = useState<string>('newest');
@@ -42,7 +40,7 @@ export const BlogProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
 
-    // Fetch Post data from the API
+   
     const {data:postsData,isLoading:isPostsLoading , error:postsError} = useSWR('/api/blog',getFetcher);
 
     useEffect(() => {
@@ -59,7 +57,7 @@ export const BlogProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, [postsData,postsError]);
 
-    // Adds a new comment to a specific post by updating the state.
+    
     const addComment = (postId: number, newComment: BlogType) => {
         setPosts((prevPosts) =>
             prevPosts.map((post) =>
@@ -68,7 +66,7 @@ export const BlogProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         );
     }
 
-    // Fetches a specific blog post by its title from the API endpoint and updates the selected post in the state.
+    
     const fetchPostById =  (id: number) => {
             const {data:specificPostData,isLoading:isSpecificPostLoading , error:isSpecificPostError} = useSWR(`/api/blog/${id}`,getFetcher);
             if(specificPostData){
