@@ -1,9 +1,10 @@
 import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/BreadcrumbComp";
 import React from "react";
 import type { Metadata } from "next";
-import CreateInvoiceApp from "@/app/components/apps/invoice/Add-invoice";
+import CreateReminderPage from "@/app/components/apps/invoice/Add-invoice/create";
+
 export const metadata: Metadata = {
-  title: "create a new reminder",
+  title: "Create a new reminder",
 };
 const BCrumb = [
   {
@@ -14,12 +15,12 @@ const BCrumb = [
     title: "Create a new Reminder",
   },
 ];
-function CreateList() {
+function CreatePage() {
   return (
     <>
       <BreadcrumbComp title=" Create A New Reminder " items={BCrumb} />
-      <CreateInvoiceApp />
+      <CreateReminderPage />
     </>
   );
 }
-export default CreateList;
+export default CreatePage;

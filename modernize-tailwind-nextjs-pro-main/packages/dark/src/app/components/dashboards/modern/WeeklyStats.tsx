@@ -57,21 +57,21 @@ export const WeeklyStats = () => {
     const SalesData = [
         {
             key:"topSales",
-            title:"Top Reminder",
+            title:"Active Reminders",
             subtitle:"Submit timesheet",
             badgeColor:"lightprimary",
             bgcolor:"bg-lightprimary text-primary"
         },
         {
             key:"topSeller",
-            title:"Most Urgent",
+            title:"Weekly Reminders",
             subtitle:"Fix login issue",
             badgeColor:"lightsuccess",
             bgcolor:"bg-lightsuccess text-success"
         },
         {
             key:"topCommented",
-            title:"Most Discussed",
+            title:"Todays Reminders",
             subtitle:"Client meeting preparation",
             badgeColor:"lighterror",
             bgcolor:"bg-lighterror text-error"

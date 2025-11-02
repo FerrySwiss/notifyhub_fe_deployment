@@ -2,10 +2,10 @@ import React from 'react'
 import CardBox from "@/app/components/shared/CardBox";
 import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/BreadcrumbComp";
 import { InvoiceProvider } from '@/app/context/InvoiceContext/index';
-import InvoiceDetail from '@/app/components/apps/invoice/Invoice-detail/index'
+import ReminderDetail from '@/app/components/apps/invoice/Invoice-detail/index'
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Invoice Details App ",
+  title: "Reminder Details",
 };
 const BCrumb = [
     {
@@ -13,21 +13,18 @@ const BCrumb = [
         title: "Home",
     },
     {
-        title: "Invoice Details",
+        title: "Reminder Details",
     },
 ];
 
-function InvoiceDetailPage() {
+function ReminderDetailPage() {
     return (
         <InvoiceProvider>
-            <BreadcrumbComp title="Invoice Details" items={BCrumb} />
+            <BreadcrumbComp title="Reminder Details" items={BCrumb} />
             <CardBox>
-                <InvoiceDetail />
+                <ReminderDetail />
             </CardBox>
         </InvoiceProvider>
     )
 }
-export default InvoiceDetailPage;
-
-
-
+export default ReminderDetailPage;

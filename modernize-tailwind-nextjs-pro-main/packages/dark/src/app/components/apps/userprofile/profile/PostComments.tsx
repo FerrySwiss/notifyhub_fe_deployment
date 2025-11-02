@@ -77,7 +77,6 @@ const PostComments = ({ comment, post }: CommentProps) => {
             {comment?.profile.time}
           </p>
         </div>
-        {/**Post Content**/}
         <p className="text-ld opacity-80 text-sm py-4">
           {comment?.data.comment}
         </p>
