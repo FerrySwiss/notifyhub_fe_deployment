@@ -7,7 +7,13 @@ import CardBox from "@/app/components/shared/CardBox";
 import { UserDataContext } from "@/app/context/UserDataContext/index"; // Import global UserDataContext
 
 const ProfileSection = () => {
-  const { user, loading, error } = useContext(UserDataContext); // Consume global user
+  const context = useContext(UserDataContext); // Consume global user
+
+  if (!context) {
+    return <div>Error: User data context not available.</div>;
+  }
+
+  const { user, loading, error } = context;
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.username || "", // Use user data
@@ -26,13 +32,13 @@ const ProfileSection = () => {
     }
   }, [user]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setIsSaved(false);
   };
 
-  const handleSave = (e) => {
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real application, you would call an API to update the user data
     // For now, we just update the local state (which is not persisted)

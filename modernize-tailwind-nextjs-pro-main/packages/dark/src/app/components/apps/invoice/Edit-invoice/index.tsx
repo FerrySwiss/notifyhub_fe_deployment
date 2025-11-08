@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Alert, Button, Label, Select, TextInput, Checkbox } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { reminderService } from "@/services/api";
-import { Reminder } from "@/app/(DashboardLayout)/types/apps/reminder";
+import { Reminder } from "@/types/apps/invoice";
 import { format } from "date-fns";
 
 const EditReminderPage = ({ reminderId }: { reminderId: string }) => {

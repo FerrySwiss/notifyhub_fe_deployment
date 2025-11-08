@@ -9,9 +9,20 @@ import userimg5 from "/public/images/profile/user-8.jpg";
 import Image from "next/image";
 import Link from "next/link";
 
+interface Performer {
+    key: string;
+    profileImg: any;
+    username: string;
+    designation: string;
+    project: string;
+    priority: string;
+    color: string;
+    budget: string;
+}
+
 export const TopPerformer = () => {
 
-    const PerformersData = [
+    const PerformersData: Performer[] = [
         {
             key:"performerData1",
             profileImg:userimg1,
@@ -64,7 +75,7 @@ export const TopPerformer = () => {
         },
     ]
 
-    const renderTableRows = (data) => (
+    const renderTableRows = (data: Performer[]) => (
         <Table.Body className="divide-y divide-border dark:divide-darkborder">
             {data.map((item, index) => (
                 <Table.Row key={index}>
@@ -106,7 +117,7 @@ export const TopPerformer = () => {
         </Table.Body>
     );
 
-    const renderTable = (data) => (
+    const renderTable = (data: Performer[]) => (
         <div className="flex flex-col">
             <div className="-m-1.5 overflow-x-auto">
                 <div className="p-1.5 min-w-full inline-block align-middle">

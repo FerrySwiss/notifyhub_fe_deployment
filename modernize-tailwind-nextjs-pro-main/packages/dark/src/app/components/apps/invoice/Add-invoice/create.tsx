@@ -10,7 +10,7 @@ const CreateReminderPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Omit<Reminder, 'id' | 'completed'>>({
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     senderName: "",

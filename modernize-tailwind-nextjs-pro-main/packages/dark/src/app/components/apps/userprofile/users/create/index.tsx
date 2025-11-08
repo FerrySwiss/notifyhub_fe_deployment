@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, TextInput, Card, Label } from "flowbite-react";
-import { userService } from "@/app/services/api";
+import { userService } from "@/services/api";
 
 const CreateUserApp = () => {
   const router = useRouter();
@@ -119,7 +119,7 @@ const CreateUserApp = () => {
               />
             </div>
           </div>
-          {error && <p className="text-red-500">{error.message}</p>}
+          {error && <p className="text-red-500">{error}</p>}
           <Button type="submit" disabled={loading}>
             {loading ? "Creating..." : "Create User"}
           </Button>

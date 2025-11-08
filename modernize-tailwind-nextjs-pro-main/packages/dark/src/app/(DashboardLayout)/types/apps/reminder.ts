@@ -1,7 +1,7 @@
 export interface Reminder {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   senderEmail: string;
   senderName: string;
   receiverEmail: string;

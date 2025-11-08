@@ -1,8 +1,8 @@
 import React from 'react';
 
 
-const EditUserPage = ({ params }: { params: { id: string } }) => {
-  const userId = params.id;
+const EditUserPage = (props: any) => {
+  const userId = props.params.id;
   
   
   return (
