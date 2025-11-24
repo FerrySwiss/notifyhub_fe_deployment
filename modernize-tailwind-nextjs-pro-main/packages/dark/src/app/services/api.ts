@@ -296,7 +296,8 @@ export const userService = {
 
     const result = await client.query<{ me: { id: string; username: string; email: string; company: { id: string; name: string } } }>({ query });
     if (!result.data || !result.data.me) {
-      throw new Error("No user data returned.");
+      // Don't throw an error, just return null if no user data
+      return null;
     }
     return result.data.me;
 

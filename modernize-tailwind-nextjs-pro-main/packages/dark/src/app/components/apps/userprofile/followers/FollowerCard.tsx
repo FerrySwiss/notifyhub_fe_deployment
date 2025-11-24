@@ -108,7 +108,7 @@ const EditDepartmentModal = ({
 
 // This is a comment to force a rebuild.
 const FollowerCard = () => {
-  const { departments, setDepartmentSearch }: any = useContext(UserDataContext);
+  const { departments, departmentSearch, setDepartmentSearch }: any = useContext(UserDataContext);
 
   // State for Modal Management
   const [isModalOpen, setIsModalOpen] = useState(false);
