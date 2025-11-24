@@ -1,7 +1,8 @@
 'use client'
 import React, { createContext, useState, useEffect } from 'react';
 import { PostType, profiledataType } from '@/app/(DashboardLayout)/types/apps/userProfile';
-import { userService, departmentService } from '../../services/api';
+import { userService, departmentService, reminderService } from '../../services/api';
+import { Reminder } from '@/types/apps/invoice'; // Import Reminder type
 
 export type UserDataContextType = {
     posts: PostType[];
@@ -9,6 +10,7 @@ export type UserDataContextType = {
     user: any;
     gallery: any[];
     departments: any[];
+    reminders: Reminder[]; // Add reminders to the type
     profileData: profiledataType;
     loading: boolean;
     error: null | any;
@@ -33,6 +35,7 @@ const config = {
     gallery: [],
     followers: [], // Still here for config, but not used for state
     departments: [],
+    reminders: [], // Initialize reminders in config
     followerSearch: '',
     departmentSearch: '',
     loading: true,
@@ -45,6 +48,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const [gallery, setGallery] = useState<any[]>(config.gallery);
     // const [followers, setFollowers] = useState<any[]>(config.followers); // Removed
     const [departments, setDepartments] = useState<any[]>(config.departments);
+    const [reminders, setReminders] = useState<Reminder[]>(config.reminders); // Add reminders state
     // const [followerSearch, setFollowerSearch] = useState<string>(config.followerSearch); // Removed
     const [departmentSearch, setDepartmentSearch] = useState<string>(config.departmentSearch);
     const [userSearch, setUserSearch] = useState<string>('');
@@ -68,11 +72,14 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 const userResponse = await userService.getMe(); // Changed from usersResponse
                 const usersResponse = await userService.getAllUsers(); // Add this
                 const deptsResponse = await departmentService.getDepartments();
+                const remindersResponse = await reminderService.getReminders(); // Fetch reminders
                 setUser(userResponse); // Changed from setUsers(usersResponse.data)
                 setUsers(usersResponse); // Add this
                 // setFollowers(usersResponse.data); // Removed
                 setDepartments(deptsResponse);
+                setReminders(remindersResponse); // Set reminders state
             } catch (err) {
+                console.error("Error fetching data in UserDataContext:", err);
                 setError(err);
             } finally {
                 setLoading(false);
@@ -109,6 +116,7 @@ const filterDepartments = () => {
                 users,
                 gallery,
                 departments: filterDepartments(),
+                reminders, // Provide reminders in context
                 profileData,
                 loading,
                 error,
@@ -130,4 +138,4 @@ const filterDepartments = () => {
             {children}
         </UserDataContext.Provider>
     );
-}; 
+};  
