@@ -16,7 +16,13 @@ import ProfileTab from "./ProfileTab";
 import { UserDataContext } from "@/app/context/UserDataContext/index"; // Import UserDataContext
 
 const ProfileBanner = () => {
-  const { reminders, departments, users } = useContext(UserDataContext); // Get data from context
+  const context = useContext(UserDataContext); // Get data from context
+
+  if (!context) {
+    return <div>Loading user data...</div>;
+  }
+
+  const { reminders, departments, users } = context;
 
   return (
     <>

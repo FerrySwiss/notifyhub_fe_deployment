@@ -27,7 +27,7 @@ export const WeeklyStats = () => {
     const [activeRemindersCount, setActiveRemindersCount] = useState<number>(0);
     const [weeklyRemindersCount, setWeeklyRemindersCount] = useState<number>(0);
     const [todaysRemindersCount, setTodaysRemindersCount] = useState<number>(0);
-    const { data, loading, error } = ApolloReact.useQuery(LIST_REMINDERS_QUERY, {
+    const { data, loading, error } = ApolloReact.useQuery<{ reminders: Reminder[] }>(LIST_REMINDERS_QUERY, {
         variables: { active: true }, // Pass the active variable
     });
 

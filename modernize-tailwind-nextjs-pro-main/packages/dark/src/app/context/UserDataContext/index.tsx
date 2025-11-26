@@ -19,13 +19,6 @@ export type UserDataContextType = {
     departmentSearch: string;
     setUserSearch: React.Dispatch<React.SetStateAction<string>>;
     setDepartmentSearch: React.Dispatch<React.SetStateAction<string>>;
-    addGalleryItem: (item: any) => void;
-    addReply: (postId: number, commentId: number, reply: string) => void;
-    likePost: (postId: number) => void;
-    addComment: (postId: number, comment: string) => void;
-    likeReply: (postId: number, commentId: number) => void;
-    toggleFollow: (id: number) => void;
-    toggleDepartmentStatus: (id: number) => void;
 };
 
 export const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
@@ -106,10 +99,10 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const [error, setError] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(config.loading);
 
-    const { data: meData, loading: meLoading, error: meError } = ApolloReact.useQuery(ME_QUERY);
-    const { data: usersData, loading: usersLoading, error: usersError } = ApolloReact.useQuery(LIST_USERS_QUERY);
-    const { data: deptsData, loading: deptsLoading, error: deptsError } = ApolloReact.useQuery(LIST_DEPARTMENTS_QUERY);
-    const { data: remindersData, loading: remindersLoading, error: remindersError } = ApolloReact.useQuery(LIST_REMINDERS_QUERY, {
+    const { data: meData, loading: meLoading, error: meError } = ApolloReact.useQuery<{ me: { id: string; username: string; email: string; company: { id: string; name: string } } }>(ME_QUERY);
+    const { data: usersData, loading: usersLoading, error: usersError } = ApolloReact.useQuery<{ users: { id: string; username: string; email: string; company: { id: string; name: string } }[] }>(LIST_USERS_QUERY);
+    const { data: deptsData, loading: deptsLoading, error: deptsError } = ApolloReact.useQuery<{ departments: { id: string; name: string; company: { id: string; name: string } }[] }>(LIST_DEPARTMENTS_QUERY);
+    const { data: remindersData, loading: remindersLoading, error: remindersError } = ApolloReact.useQuery<{ reminders: Reminder[] }>(LIST_REMINDERS_QUERY, {
         variables: { active: true },
     });
 
@@ -160,13 +153,6 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 profileData,
                 loading,
                 error,
-                addGalleryItem: () => {},
-                addReply: () => {},
-                likePost: () => {},
-                addComment: () => {},
-                likeReply: () => {},
-                toggleFollow: () => {},
-                toggleDepartmentStatus: () => {},
                 setDepartmentSearch,
                 departmentSearch,
                 userSearch,

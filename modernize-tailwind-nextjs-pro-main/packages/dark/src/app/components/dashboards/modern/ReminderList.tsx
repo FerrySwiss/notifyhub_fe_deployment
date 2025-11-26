@@ -20,7 +20,7 @@ const LIST_REMINDERS_QUERY = gql`
 `;
 
 export const ReminderList = () => {
-    const { data, loading, error } = ApolloReact.useQuery(LIST_REMINDERS_QUERY, {
+    const { data, loading, error } = ApolloReact.useQuery<{ reminders: Reminder[] }>(LIST_REMINDERS_QUERY, {
         variables: { active: true }, // Pass the active variable
     });
 
