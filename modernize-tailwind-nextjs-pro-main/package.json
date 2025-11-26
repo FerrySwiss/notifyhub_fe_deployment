@@ -1,0 +1,20 @@
+{
+  "name": "modernize-tailwind-nextjs-pro-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --workspace=modernize-nextjs-pro-dark",
+    "dev": "npm run dev --workspace=modernize-nextjs-pro-dark"
+  },
+  "workspaces": [
+    "packages/dark",
+    "packages/main",
+    "packages/minisidebar",
+    "packages/nextauth",
+    "packages/rtl",
+    "packages/starterkit"
+  ],
+  "dependencies": {
+    "next-auth": "^4.24.7"
+  }
+}
