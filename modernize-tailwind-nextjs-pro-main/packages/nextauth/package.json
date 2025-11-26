@@ -23,9 +23,15 @@
     "next": "15.1.7",
     "next-auth": "^4.24.13",
     "nextjs-toploader": "^3.7.15",
+<<<<<<< HEAD
     "react": "^18.2.0",
     "react-apexcharts": "1.4.1",
     "react-dom": "^18.2.0",
+=======
+    "react": "^19.2.0",
+    "react-apexcharts": "1.4.1",
+    "react-dom": "^19.0.0",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
     "react-i18next": "^15.0.0",
     "simplebar-react": "3.2.5",
     "yup": "1.4.0"
@@ -35,8 +41,13 @@
     "@types/chance": "1.1.6",
     "@types/lodash": "^4.17.13",
     "@types/node": "20",
+<<<<<<< HEAD
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+=======
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "18",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
     "@types/react-is": "18.3.0",
     "postcss": "8",
     "tailwindcss": "3.4.4",

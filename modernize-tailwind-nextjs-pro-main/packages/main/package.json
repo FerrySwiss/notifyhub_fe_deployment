@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "modernize-nextjs-pro-main",
+=======
+  "name": "modernize-nextjs-pro",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -46,7 +50,11 @@
     "@radix-ui/react-progress": "^1.1.1",
     "@radix-ui/react-radio-group": "^1.2.2",
     "@radix-ui/react-select": "^2.1.5",
+<<<<<<< HEAD
     "react-otp-input": "^3.1.1",
+=======
+    "@radix-ui/react-separator": "^1.1.1",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
     "@radix-ui/react-slider": "^1.2.2",
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-switch": "^1.1.2",
@@ -74,12 +82,20 @@
     "moment": "2.29.4",
     "next": "^15.1.0",
     "nextjs-toploader": "^3.7.15",
+<<<<<<< HEAD
     "react": "^18.2.0",
+=======
+    "react": "^19.0.0",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
     "react-apexcharts": "1.4.1",
     "react-big-calendar": "1.13.0",
     "react-datepicker": "^7.3.0",
     "react-day-picker": "^8.10.1",
+<<<<<<< HEAD
     "react-dom": "^18.2.0",
+=======
+    "react-dom": "^19.0.0",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
     "react-i18next": "^15.0.0",
     "react-slick": "^0.30.2",
     "react-syntax-highlighter": "^15.5.0",

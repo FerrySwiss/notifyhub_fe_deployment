@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "modernize-nextjs-pro-dark",
+=======
+  "name": "modernize-nextjs-pro",
+>>>>>>> b7351e9bbd20082eff20daf111740ba8d307dc21
   "version": "1.0.0",
   "private": true,
   "scripts": {
