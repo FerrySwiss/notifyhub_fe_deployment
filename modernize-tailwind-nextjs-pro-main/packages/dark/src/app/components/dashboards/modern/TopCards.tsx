@@ -1,12 +1,18 @@
 "use client"
 import Image from "next/image"
 import CardBox from "../../shared/CardBox"
-import iconConnect from "/public/images/svgs/icon-connect.svg"
-import iconSpeechBubble from "/public/images/svgs/icon-speech-bubble.svg"
-import iconFavorites from "/public/images/svgs/icon-favorites.svg"
-import iconMailbox from "/public/images/svgs/icon-mailbox.svg"
-import iconBriefcase from "/public/images/svgs/icon-briefcase.svg"
-import iconUser from "/public/images/svgs/icon-user-male.svg"
+// import iconConnect from "/public/images/svgs/icon-connect.svg"
+// import iconSpeechBubble from "/public/images/svgs/icon-speech-bubble.svg"
+// import iconFavorites from "/public/images/svgs/icon-favorites.svg"
+// import iconMailbox from "/public/images/svgs/icon-mailbox.svg"
+// import iconBriefcase from "/public/images/svgs/icon-briefcase.svg"
+// import iconUser from "/public/images/svgs/icon-user-male.svg"
+import dailyReminders from "/public/images/dailyreminders.png"
+import weeklyUpdtaes from "/public/images/weeklyreminders.png"
+import monthlyUpdates from "/public/images/monthlyupdates.png"
+import ongoing from "/public/images/ongoing.png"
+import completed from  "/public/images/completed.png"
+import upcoming from "/public/images/upcoming.png"
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -20,7 +26,7 @@ const TopCards = () => {
             key:"card1",
             title:"Daily Alerts",
             desc:"59",
-            img:iconConnect,
+            img:dailyReminders,
             bgcolor:"bg-lightprimary dark:bg-lightprimary ",
             textclr:"text-primary dark:text-primary"
         },
@@ -28,7 +34,7 @@ const TopCards = () => {
             key:"card2",
             title:"Weekly Alerts",
             desc:"$96k",
-            img:iconSpeechBubble,
+            img:weeklyUpdtaes,
             bgcolor:"bg-lightsuccess dark:bg-lightsuccess",
             textclr:"text-success dark:text-success"
         },
@@ -36,7 +42,7 @@ const TopCards = () => {
             key:"card3",
             title:"Monthly Updates",
             desc:"696",
-            img:iconFavorites,
+            img:monthlyUpdates,
             bgcolor:"Ongoing",
             textclr:"text-error dark:text-error"
         },
@@ -44,7 +50,7 @@ const TopCards = () => {
             key:"card4",
             title:"OnGoing",
             desc:"356",
-            img:iconMailbox,
+            img:ongoing,
             bgcolor:"bg-lightinfo dark:bg-darkinfo",
             textclr:"text-info dark:text-info"
         },
@@ -52,7 +58,7 @@ const TopCards = () => {
             key:"card5",
             title:"Completed",
             desc:"3,560",
-            img:iconBriefcase,
+            img:completed,
             bgcolor:"bg-lightwarning dark:bg-lightwarning",
             textclr:"text-warning dark:text-warning"
 
@@ -61,7 +67,7 @@ const TopCards = () => {
             key:"card7",
             title:"Upcoming",
             desc:"96",
-            img:iconUser,
+            img:upcoming,
             bgcolor:"bg-lightprimary dark:bg-lightprimary",
             textclr:"text-primary dark:text-primary"
         },
