@@ -131,14 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     throw new Error('Provider not supported');
             }
             return firebase.auth().signInWithPopup(providerInstance);
-        // } else if (state.platform === 'Supabase') {
-        //     return supabase.auth.signInWithOAuth({
-        //         provider,
-        //         options: {
-        //             redirectTo: `${window.location.origin}/auth/callback`,
-        //         },
-        //     });
-        // }
+
         else if (state.platform === 'NextAuth') {
             return signIn(provider);
         }
