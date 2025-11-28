@@ -43,7 +43,11 @@ const reducer = (state: InitialStateType, action: any) => {
 const AuthContext = createContext<any | null>({
     ...initialState,
     signup: () => Promise.resolve(),
-    fetchAccessToken: () => Promise.resolve(), // Added fetchAccessToken
+    passwordStep: () => Promise.resolve(), // Added
+    mfaVerify: () => Promise.resolve(),    // Added
+    getOAuthToken: () => Promise.resolve(), // Renamed from fetchAccessToken
+    mfaSetup: () => Promise.resolve(),     // Added
+    mfaConfirm: () => Promise.resolve(),   // Added
     signin: () => Promise.resolve(),
     logout: () => Promise.resolve(),
     setPlatform: () => { },
@@ -145,7 +149,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const fetchAccessToken = async ({ username, password_val }: { username: string, password_val: string }) => {
+    const getOAuthToken = async ({ username, password_val, mfaToken = null }: { username: string, password_val: string, mfaToken?: string | null }) => {
         const params = new URLSearchParams({
             grant_type: 'password',
             username,
@@ -153,6 +157,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             client_id: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID || "test_client_id",
             client_secret: process.env.NEXT_PUBLIC_OAUTH_CLIENT_SECRET || "test_client_secret",
         });
+        if (mfaToken) {
+            params.append('mfa_token', mfaToken);
+        }
 
         const resp = await fetch('/o/token/', {
             method: 'POST',
@@ -163,7 +170,66 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (!resp.ok) throw new Error(data.error_description || 'OAuth error');
 
         storeTokens(data.access_token, data.refresh_token);
-        return data.access_token;
+        return data; // Return full data, including refresh_token
+    };
+
+
+    const passwordStep = async (username: string, password_val: string) => {
+        const resp = await fetch('/login/password/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password: password_val }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.message || 'Login failed'); // Backend returns {ok: false, message: ...}
+        return data; // { ok, mfa_required, mfa_challenge_id }
+    };
+
+    const mfaVerify = async (challengeId: string, totpCode: string) => {
+        const resp = await fetch('/mfa/verify/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                mfa_challenge_id: challengeId,
+                totp_code: totpCode,
+            }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.message || 'Invalid OTP');
+        return data.mfa_token;
+    };
+
+    const mfaSetup = async () => {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) throw new Error("No access token found for MFA setup.");
+
+        const resp = await fetch('/mfa/setup/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.message || 'Failed to get MFA setup info');
+        return data; // { ok, otpauth_uri, secret, qrcode_data_url }
+    };
+
+    const mfaConfirm = async (code: string) => {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) throw new Error("No access token found for MFA confirmation.");
+
+        const resp = await fetch('/mfa/confirm/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.message || 'Invalid code');
+        return data;
     };
 
 
@@ -192,12 +258,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: userName, email, password }),
             });
-            if (!resp.ok) {
-                const errorData = await resp.json();
-                throw new Error(errorData.message || 'Signup failed');
+            const data = await resp.json();
+            if (!resp.ok) { // Check resp.ok first for HTTP errors
+                throw new Error(data.message || 'Signup failed');
             }
-            // For now, assuming successful signup just needs a redirect, no token immediately
-            return resp.json(); // May contain user data, etc.
+            if (!data.ok) { // Check data.ok from backend's JSON response
+                throw new Error(data.message || 'Signup failed');
+            }
+            return data; // returns user + mfa metadata
         }
         return null;
     };
@@ -211,15 +279,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (state.platform === 'Firebase') {
             return firebase.auth().signInWithEmailAndPassword(email, password);
         } else if (state.platform === 'NextAuth') {
-            const accessToken = await fetchAccessToken({ username: email, password_val: password });
-            // Use NextAuth.js signIn to establish session, passing the obtained token
+            // Step 1: Password verification
+            const passwordStepResponse = await passwordStep(email, password);
+
+            if (!passwordStepResponse.ok) {
+                throw new Error(passwordStepResponse.message || 'Login failed');
+            }
+
+            let accessTokenData;
+            if (passwordStepResponse.mfa_required) {
+                // Return control to UI to prompt for OTP
+                return { mfa_required: true, mfa_challenge_id: passwordStepResponse.mfa_challenge_id };
+            } else {
+                // No MFA required, directly get OAuth token
+                accessTokenData = await getOAuthToken({ username: email, password_val: password });
+            }
+
+            // Establish NextAuth.js session with the obtained token
             // The credentials provider in route.js needs to handle this token
-            return signIn('credentials', {
+            const result = await signIn('credentials', {
                 email,
                 password, // NextAuth CredentialsProvider might still expect these for validation
-                accessToken: accessToken,
+                accessToken: accessTokenData.access_token,
                 redirect: false, // Prevent NextAuth.js from redirecting immediately
             });
+
+            if (result?.error) {
+                throw new Error(result.error);
+            }
+            return result;
         }
         return null;
     };
@@ -240,7 +328,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setPlatform,
                 loginWithProvider,
                 signup,
-                fetchAccessToken, // Added fetchAccessToken
+                passwordStep,
+                mfaVerify,
+                getOAuthToken, // Renamed from fetchAccessToken
+                mfaSetup,
+                mfaConfirm,
                 signin,
                 logout,
             }}
