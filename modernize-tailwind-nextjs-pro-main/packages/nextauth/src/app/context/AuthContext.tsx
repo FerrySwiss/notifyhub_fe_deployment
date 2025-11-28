@@ -131,8 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     throw new Error('Provider not supported');
             }
             return firebase.auth().signInWithPopup(providerInstance);
-
-        else if (state.platform === 'NextAuth') {
+        } else if (state.platform === 'NextAuth') { // This `else if` will now be correctly associated
             return signIn(provider);
         }
     };
