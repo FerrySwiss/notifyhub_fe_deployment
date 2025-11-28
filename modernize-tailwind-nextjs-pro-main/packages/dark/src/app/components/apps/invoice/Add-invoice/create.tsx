@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from "react";
-import { Alert, Button, Label, Select, TextInput } from "flowbite-react";
+import React, { useState } from "react";
+import { Alert, Button, Label, Select, TextInput, Textarea } from "flowbite-react"; // Added Textarea
+import { useRouter } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { reminderService } from "@/app/services/api";
 import { Reminder } from "@/types/apps/invoice";
@@ -10,6 +12,7 @@ const CreateReminderPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false); // State to handle description expansion
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -55,7 +58,17 @@ const CreateReminderPage = () => {
             </div>
             <div className="lg:col-span-6 col-span-12">
               <Label htmlFor="description">Description</Label>
-              <TextInput id="description" value={formData.description} onChange={(e) => handleChange('description', e.target.value)} required />
+              <Textarea
+                id="description"
+                rows={isExpanded ? 6 : 3} // Expand rows when isExpanded is true
+                className="form-control" // Added class for consistency, assuming flowbite-react TextInput also uses it
+                value={formData.description}
+                onChange={(e) => handleChange('description', e.target.value)}
+                placeholder="Enter reminder description" // Added placeholder for clarity
+                onFocus={() => setIsExpanded(true)} // Expand when focused
+                onBlur={() => {if (!formData.description) setIsExpanded(false)}} // Collapse if unfocused and empty
+                required
+              />
             </div>
             <div className="lg:col-span-6 col-span-12">
               <Label htmlFor="senderName">Sender Name</Label>
