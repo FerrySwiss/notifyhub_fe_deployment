@@ -92,8 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             });
 
             return () => unsubscribeFirebase();
-
-        else if (state.platform === 'NextAuth') {
+        } else if (state.platform === 'NextAuth') {
             if (session?.user) {
                 dispatch({
                     type: 'AUTH_STATE_CHANGED',
