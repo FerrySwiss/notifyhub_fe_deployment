@@ -43,12 +43,25 @@ const reducer = (state: InitialStateType, action: any) => {
 const AuthContext = createContext<any | null>({
     ...initialState,
     signup: () => Promise.resolve(),
+    fetchAccessToken: () => Promise.resolve(), // Added fetchAccessToken
     signin: () => Promise.resolve(),
     logout: () => Promise.resolve(),
     setPlatform: () => { },
     loginWithProvider: () => Promise.resolve(),
     loginWithSupabase: () => Promise.resolve(),
 });
+
+// Helper function to store tokens
+const storeTokens = (accessToken: string, refreshToken: string) => {
+    localStorage.setItem('access_token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
+};
+
+// Helper function to clear tokens
+const clearTokens = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -132,6 +145,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const fetchAccessToken = async ({ username, password_val }: { username: string, password_val: string }) => {
+        const params = new URLSearchParams({
+            grant_type: 'password',
+            username,
+            password: password_val,
+            client_id: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID || "test_client_id",
+            client_secret: process.env.NEXT_PUBLIC_OAUTH_CLIENT_SECRET || "test_client_secret",
+        });
+
+        const resp = await fetch('/o/token/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params,
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error_description || 'OAuth error');
+
+        storeTokens(data.access_token, data.refresh_token);
+        return data.access_token;
+    };
+
+
     const signup = async (email: string, password: string, userName: string) => {
         if (state.platform === 'Firebase') {
             try {
@@ -151,6 +186,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 console.error('Error signing up with Firebase:', error);
                 throw new Error(error.message);
             }
+        } else if (state.platform === 'NextAuth') {
+            const resp = await fetch('/signup/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: userName, email, password }),
+            });
+            if (!resp.ok) {
+                const errorData = await resp.json();
+                throw new Error(errorData.message || 'Signup failed');
+            }
+            // For now, assuming successful signup just needs a redirect, no token immediately
+            return resp.json(); // May contain user data, etc.
         }
         return null;
     };
@@ -163,20 +210,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const signin = async (email: string, password: string) => {
         if (state.platform === 'Firebase') {
             return firebase.auth().signInWithEmailAndPassword(email, password);
-            // } else if (state.platform === 'Supabase') {
-            //     try {
-            //         const { error } = await supabase.auth.signInWithPassword({
-            //             email,
-            //             password,
-            //         });
-            //         console.log(error);
-            //         if (error) throw error;
-            //
-            //     } catch (error: any) {
-            //         throw new Error(error.message);
-            //     }
-            // }        else if (state.platform === 'NextAuth') {
-            return signIn('credentials', { email, password });
+        } else if (state.platform === 'NextAuth') {
+            const accessToken = await fetchAccessToken({ username: email, password_val: password });
+            // Use NextAuth.js signIn to establish session, passing the obtained token
+            // The credentials provider in route.js needs to handle this token
+            return signIn('credentials', {
+                email,
+                password, // NextAuth CredentialsProvider might still expect these for validation
+                accessToken: accessToken,
+                redirect: false, // Prevent NextAuth.js from redirecting immediately
+            });
         }
         return null;
     };
@@ -184,7 +227,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         if (state.platform === 'Firebase') {
             await firebase.auth().signOut();
-        } else if (state.platform === 'NextAuth') { // This `else if` will now be correctly associated
+        } else if (state.platform === 'NextAuth') {
+            clearTokens(); // Clear tokens from localStorage
             await signOut();
         }
     };
@@ -196,6 +240,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setPlatform,
                 loginWithProvider,
                 signup,
+                fetchAccessToken, // Added fetchAccessToken
                 signin,
                 logout,
             }}
