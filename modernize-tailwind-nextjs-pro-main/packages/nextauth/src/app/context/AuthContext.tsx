@@ -254,9 +254,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         if (state.platform === 'Firebase') {
             await firebase.auth().signOut();
-        // else if (state.platform === 'Supabase') {
-        //     await supabase.auth.signOut();
-        // }
+
         else if (state.platform === 'NextAuth') {
             await signOut();
         }
