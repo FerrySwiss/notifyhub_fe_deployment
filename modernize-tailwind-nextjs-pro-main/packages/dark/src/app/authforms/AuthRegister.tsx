@@ -8,13 +8,32 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image"; // Import Image component for QR code
 // import QRCode from 'qrcode'; // If we need to render QR code from otpauth_uri
 
+// Define interfaces for signup response structure
+interface MfaData {
+  enrollment_required: boolean;
+  otpauth_uri: string;
+  secret: string;
+  qrcode_data_url: string;
+}
+
+interface SignupResponse {
+  ok: boolean;
+  message: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+  };
+  mfa?: MfaData; // mfa is optional in the response
+}
+
 const AuthRegister = () => {
 
   const [email, setEmail] = useState("");
   const [userName, setuserName] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [signupResponse, setSignupResponse] = useState(null); // New state for signup response
+  const [error, setError] = useState<string | null>(null); // Type error state
+  const [signupResponse, setSignupResponse] = useState<SignupResponse | null>(null); // Type signupResponse
   const [otpCode, setOtpCode] = useState(""); // New state for OTP input
 
   const router = useRouter();
