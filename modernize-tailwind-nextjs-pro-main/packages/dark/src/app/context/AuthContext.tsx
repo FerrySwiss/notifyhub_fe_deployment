@@ -161,7 +161,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             params.append('mfa_token', mfaToken);
         }
 
-        const resp = await fetch('/o/token/', {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/o/token/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: params,
@@ -175,7 +175,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
     const passwordStep = async (username: string, password_val: string) => {
-        const resp = await fetch('/login/password/', {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login/password/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password: password_val }),
@@ -186,7 +186,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const mfaVerify = async (challengeId: string, totpCode: string) => {
-        const resp = await fetch('/mfa/verify/', {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/mfa/verify/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -203,7 +203,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) throw new Error("No access token found for MFA setup.");
 
-        const resp = await fetch('/mfa/setup/', {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/mfa/setup/`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -219,7 +219,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) throw new Error("No access token found for MFA confirmation.");
 
-        const resp = await fetch('/mfa/confirm/', {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/mfa/confirm/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -253,7 +253,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 throw new Error(error.message);
             }
         } else if (state.platform === 'NextAuth') {
-            const resp = await fetch('/signup/', {
+            const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/signup/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: userName, email, password }),

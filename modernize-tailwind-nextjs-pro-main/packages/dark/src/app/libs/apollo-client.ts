@@ -2,7 +2,7 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context'; // Import setContext
 
 const httpLink = createHttpLink({
-  uri: 'https://notifyhub-sandbox-1028525309597.us-central1.run.app/graphql/',
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
 });
 
 // Create an authLink that adds the authorization header to requests
