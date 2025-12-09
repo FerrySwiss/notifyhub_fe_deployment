@@ -1,25 +1,23 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context'; // Import setContext
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
 });
 
-// Create an authLink that adds the authorization header to requests
 const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from local storage if it exists
-  const token = localStorage.getItem('access_token'); // Retrieve token from localStorage
+  if (typeof window === "undefined") return { headers };
 
-  // Return the headers to the context so httpLink can read them
+  const token = localStorage.getItem("notifyhub_access_token");
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    }
-  }
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  };
 });
 
 export const client = new ApolloClient({
-  link: authLink.concat(httpLink), // Chain the authLink with the httpLink
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });

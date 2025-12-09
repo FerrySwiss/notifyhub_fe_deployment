@@ -34,7 +34,12 @@ const CreateReminderPage = () => {
     setError(null);
 
     try {
-      await reminderService.createReminder(formData);
+      const dataToSend = {
+        ...formData,
+        reminderStartDate: formData.reminderStartDate || undefined,
+        reminderEndDate: formData.reminderEndDate || undefined,
+      };
+      await reminderService.createReminder(dataToSend);
       setShowAlert(true);
       setTimeout(() => router.push('/apps/invoice/list'), 2000);
     } catch (error) {

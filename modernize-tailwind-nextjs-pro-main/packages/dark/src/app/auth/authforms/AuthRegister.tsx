@@ -1,8 +1,8 @@
 "use client";
 import { Button, Label, TextInput } from "flowbite-react";
-import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/app/services/api";
 
 const AuthRegister = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const AuthRegister = () => {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,24 +25,37 @@ const AuthRegister = () => {
       setError("Passwords do not match");
       return;
     }
+
+    if (!formData.name.trim()) {
+      setError("Username is required");
+      return;
+    }
+
     setError("");
+    setIsSubmitting(true);
+
     try {
-      const res = await fetch("/api/auth/send-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: formData.email }),
+      const signupResponse = await authService.signup({
+        username: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
       });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("otp", data.otp);
-        router.push("/auth/auth1/otp-verification");
-      } else {
-        setError(data.error);
-      }
-    } catch (error) {
-      setError("Failed to send OTP");
+
+      const signupSession = {
+        username: formData.name.trim(),
+        password: formData.password,
+        email: formData.email.trim(),
+        mfa: signupResponse.mfa,
+      };
+      sessionStorage.setItem(
+        "notifyhub_signup_session",
+        JSON.stringify(signupSession)
+      );
+      router.push("/auth/mfa-setup");
+    } catch (err: any) {
+      setError(err?.message || "Signup failed");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -117,8 +131,9 @@ const AuthRegister = () => {
           color={"primary"}
           className="w-full rounded-md"
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
-          Sign Up
+          {isSubmitting ? "Creating account..." : "Sign Up"}
         </Button>
       </form>
     </>

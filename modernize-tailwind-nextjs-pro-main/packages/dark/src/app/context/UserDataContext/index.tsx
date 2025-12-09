@@ -92,6 +92,8 @@ const ME_QUERY = gql`
       id
       username
       email
+      firstName
+      lastName
       company {
         id
         name
@@ -153,11 +155,25 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const [error, setError] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(config.loading);
 
-    const { data: meApolloData, loading: meLoading, error: meError } = ApolloReact.useQuery(ME_QUERY);
-    const { data: usersApolloData, loading: usersLoading, error: usersError } = ApolloReact.useQuery(LIST_USERS_QUERY);
-    const { data: deptsApolloData, loading: deptsLoading, error: deptsError } = ApolloReact.useQuery(LIST_DEPARTMENTS_QUERY);
+    // Check if we have a token before making queries
+    const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('notifyhub_access_token');
+
+    const { data: meApolloData, loading: meLoading, error: meError } = ApolloReact.useQuery(ME_QUERY, {
+        skip: !hasToken,
+        errorPolicy: 'all',
+    });
+    const { data: usersApolloData, loading: usersLoading, error: usersError } = ApolloReact.useQuery(LIST_USERS_QUERY, {
+        skip: !hasToken,
+        errorPolicy: 'all',
+    });
+    const { data: deptsApolloData, loading: deptsLoading, error: deptsError } = ApolloReact.useQuery(LIST_DEPARTMENTS_QUERY, {
+        skip: !hasToken,
+        errorPolicy: 'all',
+    });
     const { data: remindersApolloData, loading: remindersLoading, error: remindersError } = ApolloReact.useQuery(LIST_REMINDERS_QUERY, {
         variables: { active: true },
+        skip: !hasToken,
+        errorPolicy: 'all',
     });
 
     useEffect(() => {
@@ -166,7 +182,12 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const deptsData = deptsApolloData as DepartmentsData | undefined;
         const remindersData = remindersApolloData as RemindersData | undefined;
 
-        if (meData) setUser(meData.me);
+        if (meData?.me) {
+            console.log("UserDataContext: Setting user data", meData.me);
+            setUser(meData.me);
+        } else if (!hasToken) {
+            console.warn("UserDataContext: No auth token found, user data will not load");
+        }
         if (usersData) setUsers(usersData.users);
         if (deptsData) setDepartments(deptsData.departments);
         if (remindersData) setReminders(remindersData.reminders);
@@ -179,17 +200,32 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
         setLoading(meLoading || usersLoading || deptsLoading || remindersLoading);
 
-    }, [meApolloData, usersApolloData, deptsApolloData, remindersApolloData, meLoading, usersLoading, deptsLoading, remindersLoading, meError, usersError, deptsError, remindersError]);
+    }, [meApolloData, usersApolloData, deptsApolloData, remindersApolloData, meLoading, usersLoading, deptsLoading, remindersLoading, meError, usersError, deptsError, remindersError, hasToken]);
 
+    // Update profileData when user data is available
     const [profileData, setProfileData] = useState<profiledataType>({
-        name: 'Mathew Anderson',
-        role: 'Designer',
+        name: '',
+        role: '',
         avatar: '/images/profile/user-1.jpg',
         coverImage: '/images/backgrounds/profilebg.jpg',
-        postsCount: 938,
-        followersCount: 3586,
-        followingCount: 2659,
+        postsCount: 0,
+        followersCount: 0,
+        followingCount: 0,
     });
+
+    // Update profileData when user changes
+    useEffect(() => {
+        if (user) {
+            const fullName = user.firstName && user.lastName 
+                ? `${user.firstName} ${user.lastName}`
+                : user.username || 'User';
+            setProfileData(prev => ({
+                ...prev,
+                name: fullName,
+                role: user.company?.name || 'User',
+            }));
+        }
+    }, [user]);
     
     const filterDepartments = () => {
         if (departments && departmentSearch) {

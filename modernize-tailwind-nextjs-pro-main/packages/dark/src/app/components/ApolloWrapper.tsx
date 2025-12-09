@@ -2,38 +2,48 @@
 
 import { ApolloProvider } from "@apollo/client/react";
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
-import { setContext } from '@apollo/client/link/context';
-import { useSession } from "next-auth/react";
-import { ReactNode, useMemo } from "react";
+import { setContext } from "@apollo/client/link/context";
+import { ReactNode, useEffect, useState } from "react";
 
 export function ApolloWrapper({ children }: { children: ReactNode }) {
-  const { data: session } = useSession();
+  const [client, setClient] = useState<ApolloClient<any> | null>(null);
 
-  console.log("session", session);
+  useEffect(() => {
+    const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT;
 
-  const client = useMemo(() => {
+    if (!endpoint) {
+      console.error("❌ GraphQL endpoint missing — set NEXT_PUBLIC_GRAPHQL_ENDPOINT in .env");
+      return;
+    }
+
     const httpLink = createHttpLink({
-      uri: 'https://notifyhub-sandbox-1028525309597.us-central1.run.app/graphql/',
+      uri: endpoint.endsWith("/") ? endpoint : `${endpoint}/`,  // ensure trailing slash
     });
 
     const authLink = setContext((_, { headers }) => {
-      // Get the authentication token from the session
-      const token = session?.accessToken;
-
-      // Return the headers to the context so httpLink can read them
+      const token = localStorage.getItem("notifyhub_access_token");
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : "",
+          Authorization: token ? `Bearer ${token}` : "",
         },
       };
     });
 
-    return new ApolloClient({
-      link: authLink.concat(httpLink),
-      cache: new InMemoryCache(),
-    });
-  }, [session]);
+    setClient(
+      new ApolloClient({
+        link: authLink.concat(httpLink),
+        cache: new InMemoryCache(),
+        defaultOptions: {
+          query: { fetchPolicy: "network-only" }, // avoid cached old data
+          watchQuery: { fetchPolicy: "network-only" },
+        },
+      })
+    );
+  }, []); // runs once on mount
+
+  // Wait for client initialization
+  if (!client) return null;
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

@@ -207,14 +207,8 @@ const resetInvoiceList = [...invoceLists]
 
 // Endpoint to get all invoice
 export async function GET(req:any){
-    let isBrowserRefreshed = req.headers.get('browserrefreshed');
     try{
-      if(isBrowserRefreshed === "false"){
         return NextResponse.json({status:200 , msg:"Success" , data: invoceLists})
-      }else{
-        invoceLists = resetInvoiceList;
-        return NextResponse.json({status:200 , msg:"Success" , data:resetInvoiceList })
-      }
     }catch(error){
       return NextResponse.json({status:400 , msg:"Internal server error",error})
     }

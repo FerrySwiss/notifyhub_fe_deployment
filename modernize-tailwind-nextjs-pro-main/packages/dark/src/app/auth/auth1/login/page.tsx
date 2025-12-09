@@ -32,7 +32,7 @@ const Login = () => {
                 {/* <SocialButtons title="or sign in with" /> */}
                 <AuthLogin />
                 <div className="flex gap-2 text-base text-ld font-medium mt-6 items-center justify-center">
-                  <p>New to Modernize?</p>
+                  <p>New to NotifyHub?</p>
                   <Link
                     href={"/auth/auth1/register"}
                     className="text-primary text-sm font-medium"
