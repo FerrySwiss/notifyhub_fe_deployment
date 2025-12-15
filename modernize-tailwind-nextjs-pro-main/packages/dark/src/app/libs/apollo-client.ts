@@ -1,10 +1,23 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
-  uri: 'https://notifyhub-sandbox-1028525309597.us-central1.run.app/graphql/',
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
+});
+
+const authLink = setContext((_, { headers }) => {
+  if (typeof window === "undefined") return { headers };
+
+  const token = localStorage.getItem("notifyhub_access_token");
+  return {
+    headers: {
+      ...headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  };
 });
 
 export const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });

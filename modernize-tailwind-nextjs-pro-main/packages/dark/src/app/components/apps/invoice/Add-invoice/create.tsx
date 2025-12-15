@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { Alert, Button, Label, Select, TextInput } from "flowbite-react";
+import { Alert, Button, Label, Select, TextInput, Textarea } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { reminderService } from "@/app/services/api";
 import { Reminder } from "@/types/apps/invoice";
@@ -10,6 +10,7 @@ const CreateReminderPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false); // State to handle description expansion
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -33,7 +34,12 @@ const CreateReminderPage = () => {
     setError(null);
 
     try {
-      await reminderService.createReminder(formData);
+      const dataToSend = {
+        ...formData,
+        reminderStartDate: formData.reminderStartDate || undefined,
+        reminderEndDate: formData.reminderEndDate || undefined,
+      };
+      await reminderService.createReminder(dataToSend);
       setShowAlert(true);
       setTimeout(() => router.push('/apps/invoice/list'), 2000);
     } catch (error) {
@@ -49,13 +55,23 @@ const CreateReminderPage = () => {
       <form onSubmit={handleSubmit}>
         <div className="bg-lightgray dark:bg-gray-800/70 p-6 my-6 rounded-md">
           <div className="grid grid-cols-12 gap-6">
-            <div className="lg:col-span-6 col-span-12">
+            <div className="lg:col-span-12 col-span-12">
               <Label htmlFor="title">Title</Label>
               <TextInput id="title" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} required />
             </div>
-            <div className="lg:col-span-6 col-span-12">
+            <div className="lg:col-span-12 col-span-12">
               <Label htmlFor="description">Description</Label>
-              <TextInput id="description" value={formData.description} onChange={(e) => handleChange('description', e.target.value)} required />
+              <Textarea
+                id="description"
+                rows={isExpanded ? 6 : 3} // Expand rows when isExpanded is true
+                className="block w-full px-3 py-2 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                value={formData.description}
+                onChange={(e) => handleChange('description', e.target.value)}
+                placeholder="Enter reminder description" // Added placeholder for clarity
+                onFocus={() => setIsExpanded(true)} // Expand when focused
+                onBlur={() => {if (!formData.description) setIsExpanded(false)}} // Collapse if unfocused and empty
+                required
+              />
             </div>
             <div className="lg:col-span-6 col-span-12">
               <Label htmlFor="senderName">Sender Name</Label>

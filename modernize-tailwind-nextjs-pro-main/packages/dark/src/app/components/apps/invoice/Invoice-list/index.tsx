@@ -6,7 +6,11 @@ import { Icon } from "@iconify/react";
 import { reminderService } from "@/app/services/api";
 import { Reminder } from "@/types/apps/invoice";
 
-function ReminderList() {
+interface ReminderListProps {
+  filter?: string;
+}
+
+function ReminderList({ filter }: ReminderListProps) {
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +56,37 @@ function ReminderList() {
     );
   };
 
-  const filteredReminders = (reminders || []).filter(r =>
+  // Apply filter based on filter type
+  const applyFilter = (reminderList: Reminder[]) => {
+    if (!filter) return reminderList;
+
+    const now = new Date();
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    switch (filter) {
+      case 'pending':
+        return reminderList.filter(r => r.active && new Date(r.reminderEndDate) > now);
+      case '7days':
+        return reminderList.filter(r => {
+          const endDate = new Date(r.reminderEndDate);
+          return endDate >= now && endDate <= sevenDaysFromNow;
+        });
+      case '30days':
+        return reminderList.filter(r => {
+          const endDate = new Date(r.reminderEndDate);
+          return endDate >= now && endDate <= thirtyDaysFromNow;
+        });
+      case 'completed':
+        return reminderList.filter(r => r.completed || !r.active);
+      case 'active':
+        return reminderList.filter(r => r.active);
+      default:
+        return reminderList;
+    }
+  };
+
+  const filteredReminders = applyFilter(reminders || []).filter(r =>
     (r.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
     (r.senderName || "").toLowerCase().includes(searchTerm.toLowerCase()) // senderName is optional in Reminder interface
   );
@@ -60,10 +94,28 @@ function ReminderList() {
   if (loading) return <div className="flex justify-center items-center h-[60vh]"><Spinner size="xl" /></div>;
   if (error) return <Alert color="failure">{error}</Alert>;
 
+  const getFilterLabel = (filterType: string) => {
+    const labels: Record<string, string> = {
+      pending: 'Pending Notifications',
+      '7days': 'In 7 Days',
+      '30days': 'In 30 Days',
+      completed: 'Completed',
+      active: 'Active Notifications'
+    };
+    return labels[filterType] || filterType;
+  };
+
   return (
     <div className="p-4 sm:p-6">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Reminders</h2>
-      <div className="sm:flex justify-between my-6">
+      <div className="flex items-center gap-3 mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-semibold">Notifications</h2>
+        {filter && (
+          <Badge color="info" className="text-sm">
+            {getFilterLabel(filter)}
+          </Badge>
+        )}
+      </div>
+      <div className="sm:flex justify-between my-6 gap-3">
         <TextInput
           id="search"
           type="text"
@@ -72,9 +124,21 @@ function ReminderList() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Button as={Link} href="/apps/invoice/create" color={"primary"} className="sm:w-fit w-full rounded-md sm:mt-0 mt-4">
-          + New Reminder
-        </Button>
+        <div className="flex gap-2 sm:mt-0 mt-4">
+          {filter && (
+            <Button 
+              as={Link} 
+              href="/apps/invoice/list" 
+              color="gray" 
+              className="sm:w-fit w-full rounded-md"
+            >
+              Clear Filter
+            </Button>
+          )}
+          <Button as={Link} href="/apps/invoice/create" color={"primary"} className="sm:w-fit w-full rounded-md">
+            + New Reminder
+          </Button>
+        </div>
       </div>
 
       <div className="overflow-x-auto mt-6">

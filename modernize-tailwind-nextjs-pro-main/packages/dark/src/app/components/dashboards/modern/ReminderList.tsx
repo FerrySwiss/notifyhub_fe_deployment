@@ -96,7 +96,7 @@ export const ReminderList = () => {
             <> {/* Added React Fragment */}
                 <div className="sm:flex items-center justify-between mb-6">
                     <div>
-                        <h5 className="card-title">Reminder List</h5>
+                        <h5 className="card-title">Notification List</h5>
                     </div>
                     <div className="sm:mt-0 mt-4">
                         <Link href="/apps/invoice/list">

@@ -1,30 +1,54 @@
 'use client';
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Badge, Button } from "flowbite-react";
 import { format, isValid, parseISO } from "date-fns";
 import FullLogo from "@/app/(DashboardLayout)/layout/shared/logo/FullLogo";
-import { ReminderContext } from "@/app/context/ReminderContext";
+import { reminderService } from "@/app/services/api";
+import { Reminder } from "@/types/apps/invoice";
 
 const ReminderDetail = () => {
-  const { reminders } = useContext(ReminderContext);
-  const [selectedReminder, setSelectedReminder]: any = useState(null);
+  const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const pathName = usePathname();
   const reminderId = pathName.split("/").pop();
 
   useEffect(() => {
-    if (reminders.length > 0 && reminderId) {
-      const reminder = reminders.find((r: any) => r.id.toString() === reminderId);
-      if (reminder) {
-        setSelectedReminder(reminder);
+    const fetchReminder = async () => {
+      if (!reminderId) {
+        setError("Reminder ID is missing.");
+        setLoading(false);
+        return;
       }
-    }
-  }, [reminders, reminderId]);
+      try {
+        setLoading(true);
+        const fetchedReminder = await reminderService.getReminderById(reminderId);
+        setSelectedReminder(fetchedReminder);
+        setError(null);
+      } catch (err: any) {
+        setError("Failed to fetch reminder details: " + err.message);
+        setSelectedReminder(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReminder();
+  }, [reminderId]);
+
+  if (loading) {
+    return <div>Loading reminder details...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   if (!selectedReminder) {
-    return <div>Loading...</div>;
+    return <div>No reminder found.</div>;
   }
 
   const reminderEndDate = selectedReminder.reminderEndDate
@@ -38,7 +62,7 @@ const ReminderDetail = () => {
       <div className="sm:flex justify-between items-start mb-6">
         <FullLogo />
         <div className="md:text-end md:mt-0 mt-5">
-          <Badge color={"success"}>{selectedReminder.status}</Badge>
+          <Badge color={"success"}>{selectedReminder.active ? 'Active' : 'Inactive'}</Badge>
           <h3 className="items-center mt-1 text-xl"># {selectedReminder.id}</h3>
         </div>
       </div>
