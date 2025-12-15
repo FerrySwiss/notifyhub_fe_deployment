@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import CardBox from "@/app/components/shared/CardBox";
 import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/BreadcrumbComp";
@@ -15,15 +15,21 @@ const BCrumb = [
     },
 ];
 
-function ListPage() {
+function InvoiceListContent() {
     const searchParams = useSearchParams();
     const filter = searchParams.get('filter') || undefined;
 
+    return <ReminderList filter={filter} />
+}
+
+function ListPage() {
     return (
         <>
             <BreadcrumbComp title="Notification List" items={BCrumb} />
             <CardBox>
-                <ReminderList filter={filter} />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <InvoiceListContent />
+                </Suspense>
             </CardBox>
         </>
     )
