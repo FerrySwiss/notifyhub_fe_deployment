@@ -1,12 +1,12 @@
 "use client";
 
 import { ApolloProvider } from "@apollo/client/react";
-import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { ApolloClient, InMemoryCache, createHttpLink, NormalizedCacheObject } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { ReactNode, useEffect, useState } from "react";
 
 export function ApolloWrapper({ children }: { children: ReactNode }) {
-  const [client, setClient] = useState<ApolloClient<any> | null>(null);
+  const [client, setClient] = useState<ApolloClient | null>(null);
 
   useEffect(() => {
     const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT;

@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signup = async (email: string, password: string, username: string) => {
-    const result = await authService.signup(email, password, username);
+    const result = await authService.signup({ email, password, username });
     return result; // MFA handled by UI
   };
 
@@ -81,12 +81,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // No MFA required — get token
-    const tokenData = await authService.fetchAccessToken({
-      username: email,
-      password_val: password,
-    });
+    // No MFA required — get token
+    // FIX: Check if login already returned token, otherwise try fetchAccessToken (though it might fail)
+    let accessToken = result.access_token || result.token;
+    
+    if (!accessToken) {
+        console.warn("Login response did not contain token, attempting legacy fetchAccessToken flow...");
+        const tokenData = await authService.fetchAccessToken({
+            username: email,
+            password: password,
+        });
+        accessToken = tokenData.access_token;
+    }
 
-    localStorage.setItem("notifyhub_access_token", tokenData.access_token);
+    localStorage.setItem("notifyhub_access_token", accessToken);
     dispatch({
       type: "AUTH_STATE_CHANGED",
       payload: { isAuthenticated: true },
@@ -98,13 +106,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const mfaVerify = async (challengeId: string, otp: string) => {
     const verifyResp = await authService.verifyTotp(challengeId, otp);
-    const tokenData = await authService.fetchAccessToken({
-      username: verifyResp.username,
-      password_val: verifyResp.password,
-      mfaToken: verifyResp.mfa_token,
-    });
+    
+    // FIX: Use token from verify response if available
+    let accessToken = verifyResp.access_token || verifyResp.token;
 
-    localStorage.setItem("notifyhub_access_token", tokenData.access_token);
+    if (!accessToken) {
+        console.warn("MFA Verify response did not contain token, attempting legacy fetchAccessToken flow...");
+        const tokenData = await authService.fetchAccessToken({
+            username: verifyResp.username,
+            password: verifyResp.password,
+            mfaToken: verifyResp.mfa_token,
+        });
+        accessToken = tokenData.access_token;
+    }
+
+    localStorage.setItem("notifyhub_access_token", accessToken);
     dispatch({
       type: "AUTH_STATE_CHANGED",
       payload: { isAuthenticated: true },

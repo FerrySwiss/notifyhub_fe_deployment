@@ -4,6 +4,7 @@ import * as ApolloReact from '@apollo/client/react'; // Changed import
 import { gql } from '@apollo/client'; // Keep gql from here
 import { PostType, profiledataType } from '@/app/(DashboardLayout)/types/apps/userProfile';
 import { Reminder } from '@/types/apps/invoice'; // Import Reminder type
+import { mockUser, mockUsers, mockDepartments, mockReminders } from '@/app/services/mockData';
 
 export type UserDataContextType = {
     posts: PostType[];
@@ -157,22 +158,24 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     // Check if we have a token before making queries
     const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('notifyhub_access_token');
+    // HYBRID MODE: Check Mock Data flag
+    const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true' || process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
     const { data: meApolloData, loading: meLoading, error: meError } = ApolloReact.useQuery(ME_QUERY, {
-        skip: !hasToken,
+        skip: !hasToken || USE_MOCK,
         errorPolicy: 'all',
     });
     const { data: usersApolloData, loading: usersLoading, error: usersError } = ApolloReact.useQuery(LIST_USERS_QUERY, {
-        skip: !hasToken,
+        skip: !hasToken || USE_MOCK,
         errorPolicy: 'all',
     });
     const { data: deptsApolloData, loading: deptsLoading, error: deptsError } = ApolloReact.useQuery(LIST_DEPARTMENTS_QUERY, {
-        skip: !hasToken,
+        skip: !hasToken || USE_MOCK,
         errorPolicy: 'all',
     });
     const { data: remindersApolloData, loading: remindersLoading, error: remindersError } = ApolloReact.useQuery(LIST_REMINDERS_QUERY, {
         variables: { active: true },
-        skip: !hasToken,
+        skip: !hasToken || USE_MOCK,
         errorPolicy: 'all',
     });
 
@@ -181,6 +184,16 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const usersData = usersApolloData as UsersData | undefined;
         const deptsData = deptsApolloData as DepartmentsData | undefined;
         const remindersData = remindersApolloData as RemindersData | undefined;
+
+        if (USE_MOCK) {
+            console.log("UserDataContext: Using Mock Data");
+            setUser(mockUser);
+            setUsers(mockUsers);
+            setDepartments(mockDepartments);
+            setReminders(mockReminders);
+            setLoading(false);
+            return;
+        }
 
         if (meData?.me) {
             console.log("UserDataContext: Setting user data", meData.me);
@@ -200,7 +213,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
         setLoading(meLoading || usersLoading || deptsLoading || remindersLoading);
 
-    }, [meApolloData, usersApolloData, deptsApolloData, remindersApolloData, meLoading, usersLoading, deptsLoading, remindersLoading, meError, usersError, deptsError, remindersError, hasToken]);
+    }, [meApolloData, usersApolloData, deptsApolloData, remindersApolloData, meLoading, usersLoading, deptsLoading, remindersLoading, meError, usersError, deptsError, remindersError, hasToken, USE_MOCK]);
 
     // Update profileData when user data is available
     const [profileData, setProfileData] = useState<profiledataType>({

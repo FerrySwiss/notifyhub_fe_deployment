@@ -1,26 +1,29 @@
+'use client'
 import React from 'react'
+import { useSearchParams } from 'next/navigation'
 import CardBox from "@/app/components/shared/CardBox";
 import BreadcrumbComp from "@/app/(DashboardLayout)/layout/shared/breadcrumb/BreadcrumbComp";
 import ReminderList from '@/app/components/apps/invoice/Invoice-list/index'
-import type { Metadata } from "next";
-export const metadata: Metadata = {
-  title: "Reminder List",
-};
+
 const BCrumb = [
     {
         to: "/",
         title: "Home",
     },
     {
-        title: "Reminder List",
+        title: "Notification List",
     },
 ];
+
 function ListPage() {
+    const searchParams = useSearchParams();
+    const filter = searchParams.get('filter') || undefined;
+
     return (
         <>
-            <BreadcrumbComp title="Reminder List" items={BCrumb} />
+            <BreadcrumbComp title="Notification List" items={BCrumb} />
             <CardBox>
-                <ReminderList />
+                <ReminderList filter={filter} />
             </CardBox>
         </>
     )

@@ -42,17 +42,22 @@ const SidebarContent: MenuItem[] = [
     ],
   },
   {
-    heading: "Reminders",
+    heading: "Notifications",
     children: [
       {
-        name: "Recent Reminders",
+        name: "Recent Notifications",
         id: uniqueId(),
         icon: "tabler:file-text",
         children: [
           {
             id: uniqueId(),
-            name: "Reminder List",
+            name: "Notification List",
             url: "/apps/invoice/list",
+          },
+          {
+            id: uniqueId(),
+            name: "Pending Notifications",
+            url: "/apps/invoice/list?filter=pending",
           },
         ],
       },

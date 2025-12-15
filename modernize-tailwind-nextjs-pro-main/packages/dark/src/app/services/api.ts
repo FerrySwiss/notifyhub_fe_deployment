@@ -1,14 +1,25 @@
 import { client } from '@/app/libs/apollo-client';
 import { gql } from '@apollo/client';
 import { Reminder } from '@/types/apps/invoice';
+import {
+  MOCK_TOKEN,
+  mockUser,
+  mockUsers,
+  mockDepartments,
+  mockReminders
+} from './mockData';
 
 // ---------- BASE CONFIG ----------
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 const OAUTH_CLIENT_ID = process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID || '';
 const OAUTH_CLIENT_SECRET = process.env.NEXT_PUBLIC_OAUTH_CLIENT_SECRET || '';
-const SHOULD_SEND_CLIENT_SECRET =
-  !!OAUTH_CLIENT_SECRET && !OAUTH_CLIENT_SECRET.startsWith('pbkdf2_');
+
+// MODIFIED: Allow sending secret even if it looks like a hash, per user request
+const SHOULD_SEND_CLIENT_SECRET = !!OAUTH_CLIENT_SECRET;
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
+// HYBRID MODE: Allow mocking data independently of Auth
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true' || USE_MOCK;
 
 const ensureOAuthEnv = () => {
   if (!OAUTH_CLIENT_ID) {
@@ -28,6 +39,8 @@ async function handleJsonResponse(resp: Response) {
 // ---------- AUTH SERVICE ----------
 export const authService = {
   async signup(payload: { username: string; email: string; password: string }) {
+    if (USE_MOCK) return { message: 'Signup success (mock)' };
+
     const resp = await fetch(`${API_BASE_URL}/signup/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -37,12 +50,19 @@ export const authService = {
   },
 
   async loginPassword(username: string, password: string) {
+    if (USE_MOCK) return { message: 'Login success (mock)', access_token: MOCK_TOKEN };
+
     const resp = await fetch(`${API_BASE_URL}/login/password/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
     return handleJsonResponse(resp);
+  },
+
+  // Alias for compatibility
+  async passwordStep(username: string, password: string) {
+    return this.loginPassword(username, password);
   },
 
   async verifyTotp(challengeId: string, totpCode: string) {
@@ -59,6 +79,8 @@ export const authService = {
     password: string;
     mfaToken?: string;
   }) {
+    if (USE_MOCK) return { access_token: MOCK_TOKEN, expires_in: 3600, token_type: "Bearer" };
+
     ensureOAuthEnv();
 
     const body = new URLSearchParams({
@@ -277,45 +299,74 @@ const DELETE_DEPARTMENT_MUTATION = gql`
 
 export const reminderService = {
   async getReminders(active?: boolean): Promise<Reminder[]> {
+    if (USE_MOCK_DATA) {
+      if (active !== undefined) {
+        return mockReminders.filter(r => r.active === active);
+      }
+      return mockReminders;
+    }
+
     const variables = active !== undefined ? { active } : {};
     const result = await client.query({
       query: LIST_REMINDERS_QUERY,
       variables,
       fetchPolicy: 'network-only',
     });
-    return result.data.reminders;
+    return (result.data as any).reminders;
   },
 
   async getReminderById(id: string) {
+    if (USE_MOCK_DATA) return mockReminders.find(r => r.id === id);
+
     const result = await client.query({
       query: GET_REMINDER_BY_ID_QUERY,
       variables: { id },
     });
-    return result.data.reminder;
+    return (result.data as any).reminder;
   },
 
   async createReminder(data: CreateReminderInput) {
+    if (USE_MOCK_DATA) {
+      const newReminder = { ...data, id: `rem_${Date.now()}`, active: true };
+      mockReminders.push(newReminder as any);
+      return { ok: true, reminder: newReminder };
+    }
+
     const result = await client.mutate({
       mutation: CREATE_REMINDER_MUTATION,
       variables: data,
     });
-    return result.data.createReminder;
+    return (result.data as any).createReminder;
   },
 
   async updateReminder(data: UpdateReminderInput) {
+    if (USE_MOCK_DATA) {
+      const rem = mockReminders.find(r => r.id === data.id);
+      if (rem) {
+        Object.assign(rem, data); // Simple merge
+      }
+      return { ok: true, reminder: rem };
+    }
+
     const result = await client.mutate({
       mutation: UPDATE_REMINDER_MUTATION,
       variables: data,
     });
-    return result.data.updateReminder;
+    return (result.data as any).updateReminder;
   },
 
   async deleteReminder(id: string) {
+    if (USE_MOCK_DATA) {
+      const index = mockReminders.findIndex(r => r.id === id);
+      if (index > -1) mockReminders.splice(index, 1);
+      return { ok: true };
+    }
+
     const result = await client.mutate({
       mutation: DELETE_REMINDER_MUTATION,
       variables: { id },
     });
-    return result.data.deleteReminder;
+    return (result.data as any).deleteReminder;
   },
 };
 
@@ -333,8 +384,40 @@ const LIST_USERS_QUERY = gql`
   }
 `;
 
+const CREATE_USER_MUTATION = gql`
+  mutation CreateUser(
+    $name: String!
+    $username: String!
+    $email: String!
+    $password: String
+  ) {
+    createUser(
+      name: $name
+      username: $username
+      email: $email
+      password: $password
+    ) {
+      ok
+      user {
+        id
+        username
+        email
+      }
+    }
+  }
+`;
+
+interface CreateUserInput {
+  name: string;
+  username: string;
+  email: string;
+  password?: string;
+}
+
 export const userService = {
   async getMe() {
+    if (USE_MOCK_DATA) return mockUser;
+
     const result = await client.query({
       query: gql`
         query Me {
@@ -350,17 +433,50 @@ export const userService = {
         }
       `,
     });
-    return result.data.me || null;
+    return (result.data as any).me || null;
   },
 
   async getAllUsers() {
+    if (USE_MOCK_DATA) return mockUsers;
+
     const result = await client.query({ query: LIST_USERS_QUERY });
-    return result.data.users;
+    return (result.data as any).users;
+  },
+
+  async createUser(data: CreateUserInput) {
+    if (USE_MOCK_DATA) {
+      // Split name into firstName and lastName
+      const nameParts = data.name.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const newUser = {
+        id: `user_${Date.now()}`,
+        username: data.username,
+        email: data.email,
+        firstName,
+        lastName,
+        company: {
+          id: "comp_1",
+          name: "Acme Corp"
+        }
+      };
+      mockUsers.push(newUser);
+      return { ok: true, user: newUser };
+    }
+
+    const result = await client.mutate({
+      mutation: CREATE_USER_MUTATION,
+      variables: data,
+    });
+    return (result.data as any).createUser;
   },
 };
 
 export const departmentService = {
   async getDepartments() {
+    if (USE_MOCK_DATA) return mockDepartments;
+
     const result = await client.query({
       query: gql`
         query Departments {
@@ -375,30 +491,56 @@ export const departmentService = {
         }
       `,
     });
-    return result.data.departments;
+    return (result.data as any).departments;
   },
 
   async createDepartment(data: CreateDepartmentInput) {
+    if (USE_MOCK_DATA) {
+      const newDepartment = {
+        id: `dept_${Date.now()}`,
+        name: data.name,
+        company: {
+          id: "comp_1",
+          name: "Acme Corp"
+        }
+      };
+      mockDepartments.push(newDepartment);
+      return { ok: true, department: newDepartment };
+    }
+
     const result = await client.mutate({
       mutation: CREATE_DEPARTMENT_MUTATION,
       variables: data,
     });
-    return result.data.createDepartment;
+    return (result.data as any).createDepartment;
   },
 
   async updateDepartment(data: UpdateDepartmentInput) {
+    if (USE_MOCK_DATA) {
+      // Find and update mock department
+      const dept = mockDepartments.find(d => d.id === data.id);
+      if (dept && data.name) dept.name = data.name;
+      return { ok: true, department: dept };
+    }
+
     const result = await client.mutate({
       mutation: UPDATE_DEPARTMENT_MUTATION,
       variables: data,
     });
-    return result.data.updateDepartment;
+    return (result.data as any).updateDepartment;
   },
 
   async deleteDepartment(id: string) {
+    if (USE_MOCK_DATA) {
+      const index = mockDepartments.findIndex(d => d.id === id);
+      if (index > -1) mockDepartments.splice(index, 1);
+      return { ok: true };
+    }
+
     const result = await client.mutate({
       mutation: DELETE_DEPARTMENT_MUTATION,
       variables: { id },
     });
-    return result.data.deleteDepartment;
+    return (result.data as any).deleteDepartment;
   },
 };

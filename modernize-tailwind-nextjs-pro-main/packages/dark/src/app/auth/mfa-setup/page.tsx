@@ -46,18 +46,36 @@ export default function MfaSetupPage() {
     setStatus("verifying");
 
     try {
-      const token = await authService.fetchAccessToken({
-        username: session.username,
-        password: session.password,
-      });
+      // FIX: Use Login -> Verify flow instead of fetchAccessToken -> confirmMfa
+      // Because we cannot get an access token via OAuth (invalid client), we must use the direct login flow.
+      console.log("MfaSetup: Attempting login to verify OTP...");
+      const loginResp = await authService.loginPassword(session.username, session.password);
+      
+      if (!loginResp.mfa_challenge_id) {
+          // If no challenge, maybe we are already logged in or something is generic
+          throw new Error("Login failed to return MFA challenge during setup.");
+      }
 
-      await authService.confirmMfa(code.trim(), token.access_token);
+      console.log("MfaSetup: Verifying OTP with challenge...");
+      const verifyResp = await authService.verifyTotp(loginResp.mfa_challenge_id, code.trim());
 
-      localStorage.setItem("notifyhub_access_token", token.access_token);
-      sessionStorage.removeItem("notifyhub_signup_session");
+      if (!verifyResp.ok) {
+           throw new Error(verifyResp.message || "Invalid code");
+      }
 
-      setStatus("success");
-      setTimeout(() => router.push("/auth/auth1/login"), 1200);
+      // Use token from verify response
+      const accessToken = verifyResp.access_token || verifyResp.token;
+      if (accessToken) {
+          localStorage.setItem("notifyhub_access_token", accessToken);
+          setStatus("success");
+          sessionStorage.removeItem("notifyhub_signup_session");
+          setTimeout(() => router.push("/"), 1200); // Go to dashboard, not login
+      } else {
+          // Fallback if no token returned (weird)
+           setStatus("success");
+           setTimeout(() => router.push("/auth/auth1/login"), 1200);
+      }
+
     } catch (err: any) {
       setError(err?.message || "Failed to confirm MFA");
       setStatus("idle");

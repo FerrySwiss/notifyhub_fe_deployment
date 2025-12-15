@@ -45,10 +45,10 @@ const page = () => {
         {/* <div className="lg:col-span-4 col-span-12">
           <SellingProducts/>
         </div> */}
-        <div className="lg:col-span-4 col-span-12 flex">
+        <div className="col-span-12 flex">
           <WeeklyStats/>
         </div>
-        <div className="lg:col-span-8 col-span-12">
+        <div className="col-span-12">
           <ReminderList/>
         </div>
       </div>

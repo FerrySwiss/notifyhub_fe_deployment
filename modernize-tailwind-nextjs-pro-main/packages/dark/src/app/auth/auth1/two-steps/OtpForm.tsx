@@ -50,12 +50,21 @@ const OtpForm: React.FC = () => {
       if (!verifyResp.ok) {
         throw new Error(verifyResp.message || "Invalid code");
       }
-      const token = await authService.fetchAccessToken({
-        username: session.username,
-        password: session.password,
-        mfaToken: verifyResp.mfa_token,
-      });
-      localStorage.setItem("notifyhub_access_token", token.access_token);
+      
+      // FIX: Use token from verify response if available
+      let accessToken = verifyResp.access_token || verifyResp.token;
+      
+      if (!accessToken) {
+          console.warn("MFA Verify response did not contain token, attempting legacy fetchAccessToken flow...");
+          const token = await authService.fetchAccessToken({
+            username: session.username,
+            password: session.password,
+            mfaToken: verifyResp.mfa_token,
+          });
+          accessToken = token.access_token;
+      }
+      
+      localStorage.setItem("notifyhub_access_token", accessToken);
       sessionStorage.removeItem("notifyhub_login_session");
       router.push("/");
     } catch (err: any) {
