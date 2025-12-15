@@ -9,7 +9,6 @@ import { CustomizerContextProvider } from "@/app/context/CustomizerContext";
 import { UserDataProvider } from "@/app/context/UserDataContext";
 
 import ApolloProviders from "./ApolloProviders"; // <-- Apollo Client Provider
-import "../utils/i18n";
 import NextTopLoader from "nextjs-toploader";
 
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
