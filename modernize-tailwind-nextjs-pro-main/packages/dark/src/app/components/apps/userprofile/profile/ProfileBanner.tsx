@@ -16,7 +16,7 @@ import ProfileTab from "./ProfileTab";
 import { UserDataContext } from "@/app/context/UserDataContext/index"; // Import UserDataContext
 
 const ProfileBanner = () => {
-  const { reminders, departments, users } = useContext(UserDataContext); // Get data from context
+  const { reminders, departments, users, user } = useContext(UserDataContext); // Get data from context
 
   return (
     <>
@@ -70,8 +70,8 @@ const ProfileBanner = () => {
                     className="rounded-full mx-auto border-4 border-white dark:border-darkborder"
                   />
                 </div>
-                <h5 className="text-lg mt-3">Jonathan Deo</h5>
-                <p className="text-darklink">Designer</p>
+                <h5 className="text-lg mt-3">{user ? (user.firstName ? `${user.firstName} ${user.lastName}` : user.username) : 'User'}</h5>
+                <p className="text-darklink">{user?.company?.name || 'Company Name'}</p>
               </div>
             </div>
             {/* --- Social Section --- */}

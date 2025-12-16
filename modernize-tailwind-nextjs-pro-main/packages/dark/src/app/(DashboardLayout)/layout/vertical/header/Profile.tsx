@@ -1,13 +1,23 @@
 import { Icon } from "@iconify/react";
 import { Button, Dropdown } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import * as profileData from "./Data";
 import Link from "next/link";
 import Image from "next/image";
 import SimpleBar from "simplebar-react";
 import unlimitedbg from "/public/images/backgrounds/unlimited-bg.png"
+import { UserDataContext } from "@/app/context/UserDataContext";
 
 const Profile = () => {
+  const { user, loading } = useContext(UserDataContext);
+
+  const displayName = user 
+    ? (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username) 
+    : "User";
+    
+  const displayRole = user?.company?.name || "Company Name";
+  const displayEmail = user?.email || "info@notifyhub.com";
+
   return (
     <div className="relative group/menu ps-15">
       <Dropdown
@@ -37,14 +47,18 @@ const Profile = () => {
               className="rounded-full"
             />
             <div>
-              <h5 className="card-title text-sm  mb-0.5 font-medium">Mathew Anderson</h5>
-              <span className="card-subtitle text-muted font-normal">Company Name</span>
+              <h5 className="card-title text-sm  mb-0.5 font-medium">
+                {loading ? "Loading..." : displayName}
+              </h5>
+              <span className="card-subtitle text-muted font-normal">
+                {loading ? "..." : displayRole}
+              </span>
               <p className="card-subtitle font-normal text-muted mb-0 mt-1 flex items-center">
                 <Icon
                   icon="tabler:mail"
                   className="text-base me-1 relative top-0.5"
                 />
-                info@notifyhub.com
+                {loading ? "..." : displayEmail}
               </p>
             </div>
           </div>
@@ -86,6 +100,14 @@ const Profile = () => {
             as={Link}
             href="/auth/auth1/login"
             className="w-full rounded-md"
+            onClick={() => {
+                // Clear tokens on logout
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem("notifyhub_access_token");
+                    sessionStorage.removeItem("notifyhub_login_session");
+                    sessionStorage.removeItem("notifyhub_signup_session");
+                }
+            }}
           >
             Logout
           </Button>

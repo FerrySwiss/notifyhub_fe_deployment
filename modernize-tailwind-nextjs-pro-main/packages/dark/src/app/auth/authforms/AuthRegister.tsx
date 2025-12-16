@@ -35,18 +35,35 @@ const AuthRegister = () => {
     setIsSubmitting(true);
 
     try {
+      // 1. Signup
       const signupResponse = await authService.signup({
         username: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
       });
 
+      // 2. Silent Login to get Access Token for MFA Setup
+      let accessToken = "";
+      try {
+        const tokenResp = await authService.fetchAccessToken({
+            username: formData.name.trim(),
+            password: formData.password,
+        });
+        accessToken = tokenResp.access_token;
+      } catch (tokenErr) {
+        console.error("Silent login failed:", tokenErr);
+        // We might still proceed if we want to try re-login in next step, 
+        // but ideally this should work if signup worked.
+      }
+
       const signupSession = {
         username: formData.name.trim(),
-        password: formData.password,
+        password: formData.password, // Keep for fallback re-login if needed
         email: formData.email.trim(),
         mfa: signupResponse.mfa,
+        accessToken: accessToken, // Store token
       };
+      
       sessionStorage.setItem(
         "notifyhub_signup_session",
         JSON.stringify(signupSession)

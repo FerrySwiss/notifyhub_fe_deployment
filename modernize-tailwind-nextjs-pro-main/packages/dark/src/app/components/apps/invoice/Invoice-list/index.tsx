@@ -1,9 +1,10 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Checkbox, Table, TextInput, Button, Modal, Badge, Tooltip, Alert, Spinner } from "flowbite-react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { reminderService } from "@/app/services/api";
+import { UserDataContext } from "@/app/context/UserDataContext";
 import { Reminder } from "@/types/apps/invoice";
 
 interface ReminderListProps {
@@ -11,32 +12,28 @@ interface ReminderListProps {
 }
 
 function ReminderList({ filter }: ReminderListProps) {
-  const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { reminders } = useContext(UserDataContext); // Use Context
+  
+  // DEBUG: Check what the UI receives
+  useEffect(() => {
+    console.log("ReminderList UI Received:", reminders);
+  }, [reminders]);
+
+  // const [reminders, setReminders] = useState<Reminder[]>([]); // Removed local state
+  const [loading, setLoading] = useState(false); // Context handles loading usually, but we can simplify
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReminders, setSelectedReminders] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-  useEffect(() => {
-    const fetchReminders = async () => {
-      try {
-        const fetchedReminders = await reminderService.getReminders();
-        setReminders(fetchedReminders);
-      } catch (err) {
-        setError("Failed to fetch reminders.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReminders();
-  }, []);
+  // Removed useEffect fetch
+
 
   const handleConfirmDelete = async () => {
     try {
       await Promise.all(selectedReminders.map(id => reminderService.deleteReminder(id)));
-      setReminders(reminders.filter(r => !selectedReminders.includes(r.id)));
+      // Context will update automatically due to refetchQueries
       setSelectedReminders([]);
       setOpenDeleteDialog(false);
     } catch (err) {
@@ -47,7 +44,7 @@ function ReminderList({ filter }: ReminderListProps) {
   const toggleSelectAll = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    setSelectedReminders(newSelectAll ? reminders.map(r => r.id) : []);
+    setSelectedReminders(newSelectAll ? (reminders || []).map(r => r.id) : []);
   };
 
   const toggleSelectReminder = (id: string) => {
