@@ -12,6 +12,7 @@ type SignupSession = {
   mfa?: {
     otpauth_uri: string;
   };
+  accessToken?: string;
 };
 
 export default function MfaSetupPage() {
@@ -46,35 +47,35 @@ export default function MfaSetupPage() {
     setStatus("verifying");
 
     try {
-      // FIX: Use Login -> Verify flow instead of fetchAccessToken -> confirmMfa
-      // Because we cannot get an access token via OAuth (invalid client), we must use the direct login flow.
-      console.log("MfaSetup: Attempting login to verify OTP...");
-      const loginResp = await authService.loginPassword(session.username, session.password);
-      
-      if (!loginResp.mfa_challenge_id) {
-          // If no challenge, maybe we are already logged in or something is generic
-          throw new Error("Login failed to return MFA challenge during setup.");
+      let accessToken = session.accessToken;
+
+      // Fallback: if no token from silent login, try to login again
+      if (!accessToken) {
+        console.log("MfaSetup: No token found, attempting login...");
+        const loginResp = await authService.loginPassword(session.username, session.password);
+        if (loginResp.access_token) {
+           accessToken = loginResp.access_token;
+        } else if (loginResp.mfa_required) {
+             // This shouldn't theoretically happen during setup unless setup is half-done?
+             // But if it does, we can't really proceed easily without the token.
+             throw new Error("Login required MFA but setup is not complete.");
+        } else {
+             throw new Error("Could not obtain access token.");
+        }
       }
 
-      console.log("MfaSetup: Verifying OTP with challenge...");
-      const verifyResp = await authService.verifyTotp(loginResp.mfa_challenge_id, code.trim());
+      console.log("MfaSetup: Confirming MFA with token...");
+      const confirmResp = await authService.confirmMfa(code.trim(), accessToken as string);
 
-      if (!verifyResp.ok) {
-           throw new Error(verifyResp.message || "Invalid code");
+      if (!confirmResp.ok) {
+           throw new Error(confirmResp.message || "Invalid code");
       }
 
-      // Use token from verify response
-      const accessToken = verifyResp.access_token || verifyResp.token;
-      if (accessToken) {
-          localStorage.setItem("notifyhub_access_token", accessToken);
-          setStatus("success");
-          sessionStorage.removeItem("notifyhub_signup_session");
-          setTimeout(() => router.push("/"), 1200); // Go to dashboard, not login
-      } else {
-          // Fallback if no token returned (weird)
-           setStatus("success");
-           setTimeout(() => router.push("/auth/auth1/login"), 1200);
-      }
+      // Success! Token is valid. Store and redirect.
+      localStorage.setItem("notifyhub_access_token", accessToken as string);
+      setStatus("success");
+      sessionStorage.removeItem("notifyhub_signup_session");
+      setTimeout(() => router.push("/"), 1200);
 
     } catch (err: any) {
       setError(err?.message || "Failed to confirm MFA");

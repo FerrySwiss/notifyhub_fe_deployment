@@ -215,6 +215,16 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     }, [meApolloData, usersApolloData, deptsApolloData, remindersApolloData, meLoading, usersLoading, deptsLoading, remindersLoading, meError, usersError, deptsError, remindersError, hasToken, USE_MOCK]);
 
+    // DEBUG: Log Reminders Data
+    useEffect(() => {
+        console.log("UserDataContext: Reminders Query Result:", {
+            data: remindersApolloData,
+            loading: remindersLoading,
+            error: remindersError,
+            activeVariable: true
+        });
+    }, [remindersApolloData, remindersLoading, remindersError]);
+
     // Update profileData when user data is available
     const [profileData, setProfileData] = useState<profiledataType>({
         name: '',

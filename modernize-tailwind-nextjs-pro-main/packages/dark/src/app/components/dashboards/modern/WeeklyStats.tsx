@@ -70,23 +70,85 @@ export const WeeklyStats = () => {
         let completedData: number[] = [];
         let pendingData: number[] = [];
 
-        switch (timePeriod) {
-            case 'daily':
-                categories = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-                completedData = [0, 5, 20, 15, 25, 22, 30];
-                pendingData = [15, 10, 15, 20, 12, 10, 5];
-                break;
-            case 'weekly':
-                categories = ["Week 1", "Week 2", "Week 3", "Week 4"];
-                completedData = [45, 60, 75, 90];
-                pendingData = [55, 45, 35, 25];
-                break;
-            case 'monthly':
-                categories = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-                completedData = [120, 150, 180, 200, 220, 250];
-                pendingData = [80, 70, 60, 55, 50, 40];
-                break;
+        // Helper to group by key
+        const counts: Record<string, { completed: number; pending: number }> = {};
+        
+        // Initialize based on period
+        if (timePeriod === 'daily') {
+             // Last 7 days
+             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+             const today = new Date();
+             for (let i = 6; i >= 0; i--) {
+                 const d = new Date(today);
+                 d.setDate(today.getDate() - i);
+                 const key = days[d.getDay()];
+                 categories.push(key);
+                 counts[key] = { completed: 0, pending: 0 };
+             }
+
+             reminders.forEach(r => {
+                 const d = new Date(r.reminderStartDate);
+                 const dayDiff = Math.floor((today.getTime() - d.getTime()) / (1000 * 3600 * 24));
+                 if (dayDiff >= 0 && dayDiff <= 6) {
+                     const key = days[d.getDay()];
+                     if (counts[key]) {
+                        if (r.active) counts[key].pending++;
+                        else counts[key].completed++;
+                     }
+                 }
+             });
+
+        } else if (timePeriod === 'weekly') {
+            // Last 4 weeks
+            categories = ["Week 4", "Week 3", "Week 2", "Week 1"]; // Reversed chrono
+            categories.forEach(c => counts[c] = { completed: 0, pending: 0 });
+            
+            const today = new Date();
+            reminders.forEach(r => {
+                 const d = new Date(r.reminderStartDate);
+                 const dayDiff = Math.floor((today.getTime() - d.getTime()) / (1000 * 3600 * 24));
+                 const weekIndex = Math.floor(dayDiff / 7);
+                 
+                 if (weekIndex >= 0 && weekIndex < 4) {
+                     const key = categories[3 - weekIndex]; // Map 0->Week 1, 1->Week 2 etc
+                     if (counts[key]) {
+                        if (r.active) counts[key].pending++;
+                        else counts[key].completed++;
+                     }
+                 }
+            });
+
+        } else if (timePeriod === 'monthly') {
+            // Last 6 months
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const today = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                const key = months[d.getMonth()];
+                categories.push(key);
+                 counts[key] = { completed: 0, pending: 0 };
+            }
+
+            reminders.forEach(r => {
+                const d = new Date(r.reminderStartDate);
+                // Check if within last 6 months window approx
+                const monthDiff = (today.getFullYear() - d.getFullYear()) * 12 + (today.getMonth() - d.getMonth());
+                if (monthDiff >= 0 && monthDiff <= 5) {
+                    const key = months[d.getMonth()];
+                     if (counts[key]) {
+                        if (r.active) counts[key].pending++;
+                        else counts[key].completed++;
+                     }
+                }
+            });
         }
+
+        // Fill data arrays from counts
+        categories.forEach(cat => {
+            completedData.push(counts[cat]?.completed || 0);
+            pendingData.push(counts[cat]?.pending || 0);
+        });
 
         return {
             series: [
@@ -99,7 +161,7 @@ export const WeeklyStats = () => {
                 fontFamily: "inherit",
                 type: "bar" as const,
                 height: 250,
-                stacked: false,
+                stacked: true, // Stacked looks better for status comparison usually
             },
             plotOptions: {
                 bar: {

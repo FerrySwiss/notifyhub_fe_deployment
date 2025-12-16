@@ -41,7 +41,7 @@ export const authService = {
   async signup(payload: { username: string; email: string; password: string }) {
     if (USE_MOCK) return { message: 'Signup success (mock)' };
 
-    const resp = await fetch(`${API_BASE_URL}/signup/`, {
+    const resp = await fetch(`${API_BASE_URL}/app/signup/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -52,7 +52,7 @@ export const authService = {
   async loginPassword(username: string, password: string) {
     if (USE_MOCK) return { message: 'Login success (mock)', access_token: MOCK_TOKEN };
 
-    const resp = await fetch(`${API_BASE_URL}/login/password/`, {
+    const resp = await fetch(`${API_BASE_URL}/app/login/password/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -66,7 +66,7 @@ export const authService = {
   },
 
   async verifyTotp(challengeId: string, totpCode: string) {
-    const resp = await fetch(`${API_BASE_URL}/mfa/verify/`, {
+    const resp = await fetch(`${API_BASE_URL}/app/mfa/verify/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mfa_challenge_id: challengeId, totp_code: totpCode }),
@@ -103,7 +103,7 @@ export const authService = {
   },
 
   async confirmMfa(code: string, accessToken: string) {
-    const resp = await fetch(`${API_BASE_URL}/mfa/confirm/`, {
+    const resp = await fetch(`${API_BASE_URL}/app/mfa/confirm/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -335,6 +335,7 @@ export const reminderService = {
     const result = await client.mutate({
       mutation: CREATE_REMINDER_MUTATION,
       variables: data,
+      refetchQueries: ['Reminders'],
     });
     return (result.data as any).createReminder;
   },
@@ -351,6 +352,7 @@ export const reminderService = {
     const result = await client.mutate({
       mutation: UPDATE_REMINDER_MUTATION,
       variables: data,
+      refetchQueries: ['Reminders'],
     });
     return (result.data as any).updateReminder;
   },
@@ -365,6 +367,7 @@ export const reminderService = {
     const result = await client.mutate({
       mutation: DELETE_REMINDER_MUTATION,
       variables: { id },
+      refetchQueries: ['Reminders'],
     });
     return (result.data as any).deleteReminder;
   },
@@ -511,6 +514,7 @@ export const departmentService = {
     const result = await client.mutate({
       mutation: CREATE_DEPARTMENT_MUTATION,
       variables: data,
+      refetchQueries: ['Departments'],
     });
     return (result.data as any).createDepartment;
   },
@@ -526,6 +530,7 @@ export const departmentService = {
     const result = await client.mutate({
       mutation: UPDATE_DEPARTMENT_MUTATION,
       variables: data,
+      refetchQueries: ['Departments'],
     });
     return (result.data as any).updateDepartment;
   },
@@ -540,6 +545,7 @@ export const departmentService = {
     const result = await client.mutate({
       mutation: DELETE_DEPARTMENT_MUTATION,
       variables: { id },
+      refetchQueries: ['Departments'],
     });
     return (result.data as any).deleteDepartment;
   },
